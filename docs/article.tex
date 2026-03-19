@@ -95,27 +95,10 @@
 %%
 %% The "title" command has an optional parameter,
 %% allowing the author to define a "short title" to be used in page headers.
-\title{Predloga za izdelavo prispevkov za SCORES v sistemu \LaTeX}
+\title{Klasifikacija neželenih SMS sporočil}
 
-
-%%
-%% The "author" command and its associated commands are used to define
-%% the authors and their affiliations.
-%% Of note is the shared affiliation of the first two authors, and the
-%% "authornote" and "authornotemark" commands
-%% used to denote shared contribution to the research.
-\author{Matija Pajenk}
-%\authornote{Vsi trije avtorji so prispevali enakovreden dele\v{z}.}
-\email{matija.pajenk@student.um.si}
-\affiliation{%
-    \institution{Faculty of Electrical \\Engineering and Computer Science,\\
-    University of Maribor\\Koroška cesta 46}
-    \city{SI-2000 Maribor}
-    \country{Slovenia}
-}
 
 \author{David Krajnc}
-%\authornotemark[1]
 \email{david.krajnc4@student.um.si}
 \affiliation{%
     \institution{Faculty of Electrical \\Engineering and Computer Science,\\
@@ -124,8 +107,25 @@
     \country{Slovenia}
 }
 
+\author{David Lipavec}
+\email{david.lipavec@student.um.si}
+\affiliation{%
+    \institution{Faculty of Electrical \\Engineering and Computer Science,\\
+    University of Maribor\\Koroška cesta 46}
+    \city{SI-2000 Maribor}
+    \country{Slovenia}
+}
+
+\author{Matija Pajenk}
+\email{matija.pajenk@student.um.si}
+\affiliation{%
+    \institution{Faculty of Electrical \\Engineering and Computer Science,\\
+    University of Maribor\\Koroška cesta 46}
+    \city{SI-2000 Maribor}
+    \country{Slovenia}
+}
+
 \author{Andraž Šoštarič}
-%\authornotemark[1]
 \email{andraz.sostaric@student.um.si}
 \affiliation{%
     \institution{Faculty of Electrical \\Engineering and Computer Science,\\
@@ -143,59 +143,24 @@
     \country{Slovenia}
 }
 
-\author{David Lipavec}
-\email{david.lipavec@student.um.si}
-\affiliation{%
-    \institution{Faculty of Electrical \\Engineering and Computer Science,\\
-    University of Maribor\\Koroška cesta 46}
-    \city{SI-2000 Maribor}
-    \country{Slovenia}
-}
 
-%%
-%% The abstract is a short summary of the work to be presented in the
-%% article.
 \begin{abstract}
-    Pri"cujo"ci dokument podaja predlogo dokumenta v sistemu \LaTeX, ki
-    ustreza slogovnim smernicam zbornika konference \scores\ in služi kot
-    vodič k pripravi prispevka za to konferenco.  Avtorji so poskušali zajeti
-    ve"cino pogosto uporabljenih elementov, kot so naslovi in podnaslovi,
-    no"zne opombe, sklici, enačbe, tabele, slike, seznami, algoritmi itd.
-    Izvorno kodo dokumenta (datoteko \texttt{.tex}) prevedite z ukazoma
-    \texttt{pdflatex} in \texttt{bibtex} in dobljeni izhodni dokument
-    (datoteko \texttt{.pdf}) primerjajte z referen"cnim.
+    Povzetek
 \end{abstract}
 
-%%
-%% Keywords. The author(s) should pick words that accurately describe
-%% the work being presented. Separate the keywords with commas.
-\keywords{zbornik, \LaTeX, ozna"cevanje besedila\footnote{Navedite od tri do
-deset ključnih besed, ki so specifične za vaš prispevek, a se znotraj
-(o"zjega) podro"cja va"sega dela kljub temu pogosto uporabljajo.}}
 
-%%
-%% This command processes the author and affiliation and title
-%% information and builds the first part of the formatted document.
+\keywords{SMS, vsiljiva sporočila, klasifikacija}
+
+
 \maketitle
 
 \section{Uvod}
-
-\emph{Zbornik} je zbirka prispevkov, predstavljenih na konferenci.
-Organizacijski odbor konference \scores\ se trudi za slogovno poenotenost in
-tipografsko kakovost prispevkov, zato dolo"ca nekaj strogih pravil za njihovo
-oblikovanje.  Tako je med drugim predpisana osnovna oblika dokumenta
-(dvostolp"cni format), pisava in njena velikost, dol"zina posameznih robov,
-širina stolpca in razmak med stolpcema.
-
-K sre"ci za vse našteto poskrbi sistem \LaTeX.  Avtorji se morate zgolj
-dr"zati nekaj preprostih pravil in zagotoviti, da izhodni dokument PDF ne
-presega \textbf{"stirih strani}.
-
-V preostanku tega dokumenta predstavljamo izbor \LaTeX{}ovih ukazov za
-dolo"citev zgradbe va"sega dokumenta.  Namesto da bi vsak ukaz posebej
-natan"cno opisali ali pojasnili, smo se raje odlo"cili za predstavitev ukazov
-s pomo"cjo primerov v kontekstu vzor"cnega dokumenta.
-
+    Mobilni telefoni so skozi leta postali del našega vsakdanjega življenja, SMS
+    sporočila pa še vedno predstavljajo pomemben del vsakdanje komunikacije. Leta 
+    2025 se je dnevno poslalo okoli 25 milijard SMS sporočil. Med njimi je veliko 
+    neželenih, ki jih pošiljajo različni ponudniki storitev in prevaranti, da bi nam 
+    prodali svoje izdelke ali storitve. V tem članku bomo predstavili štiri različne 
+    metode klasifikacije SMS sporočil, ki temeljijo na strojnem učenju.
 \section{\emph{Jedro} "clanka}
 
 Jedro članka je obi"cajno organizirano v hierarhično strukturo z oštevilčenimi
