@@ -95,7 +95,7 @@
 %%
 %% The "title" command has an optional parameter,
 %% allowing the author to define a "short title" to be used in page headers.
-\title{Klasifikacija neželenih SMS sporočil}
+\title{Klasifikacija neželjenih SMS sporočil}
 
 
 \author{David Krajnc}
@@ -176,7 +176,13 @@
 
 
 \section{Sorodna dela}
-    Sorodna dela
+    V zadnjem desetletju je tematika klasifikacije nezaželenih SMS sporočil pritegnila precej pozornosti raziskovalcev. Razlog je predvsem v tem, da se spam sporočila razlikujejo od klasične elektronske pošte \cite{lota2017systematic}. Gre predvsem za omejeno dolžino besedila in specifičen slog jezika, denimo uporabo kratic ali emojijev.
+
+    Avtorji Xu in sodelavci so se v svoji raziskavi osredotočili na detekcijo brez uporabe vsebine sporočil (angl. non-content features). Namesto analize besedila so preučevali metapodatke in vedenjske vzorce, kar dokazuje, da je mogoče visoko natančnost doseči tudi z metodami, ki ne posegajo v zasebnost vsebine sporočil, temveč analizirajo le omrežne interakcije \cite{6133257}.
+    
+    Po drugi strani pa se večina raziskav opira na algoritme strojnega učenja, ki analizirajo neposredno vsebino. Sethi in sodelavci so izvedli primerjalno analizo različnih algoritmov, kjer so poudarili pomen predobdelave podatkov in uporabo tehnik naravnega jezika (NLP) za ekstrakcijo značilk \cite{8284445}. Njihovi rezultati potrjujejo, da so modeli, kot so naivni Bayesov klasifikator in podporni vektorji (SVM), izjemno učinkoviti pri binarni klasifikaciji sporočil.
+    
+    Glavno motivacijo za pričujočo seminarsko nalogo predstavlja delo Shirani-Mehra. Avtor je v svoji raziskavi sistematično preučil uporabo strojnega učenja za detekcijo spama, pri čemer je primerjal zmogljivost več modelov na standardnih naborih podatkov \cite{shirani2013sms}. Njegov pristop služi kot temelj za našo implementacijo. V tem delu se osredotočamo na rekreacijo njegovih eksperimentov z namenom preverjanja ponovljivosti rezultatov v sodobnem okolju.
 
 
 \section{Lastna ideja}
