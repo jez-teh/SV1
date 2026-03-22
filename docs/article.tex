@@ -176,26 +176,22 @@
     zaključek.
 
 \section{Sorodna dela}
-    V zadnjem desetletju je tematika klasifikacije nezaželenih SMS sporočil pritegnila 
-    precej pozornosti raziskovalcev. Razlog je predvsem v tem, da se neželena sporočila 
-    razlikujejo od klasične elektronske pošte \cite{lota2017systematic}. Gre predvsem za 
-    omejeno dolžino besedila in specifičen slog jezika, denimo uporabo kratic ali emojijev.
+    Klasifikacija nezaželenih SMS sporočil se zaradi omejene dolžine besedila in specifičnega
+    sloga jezika, kot so kratice ali emojiji, predsej razlikuje od klasične elektronske pošte.
+    Kljub temu so prisotne različne raziskave \cite{lota2017systematic}.
 
     Avtorji Xu in sodelavci so se v svoji raziskavi osredotočili na detekcijo brez uporabe 
     vsebine sporočil (angl. non-content features). Namesto analize besedila so preučevali 
-    metapodatke in vedenjske vzorce, kar dokazuje, da je mogoče visoko natančnost doseči 
-    tudi z metodami, ki ne posegajo v zasebnost vsebine sporočil, temveč analizirajo le 
-    omrežne interakcije \cite{6133257}.
+    metapodatke in vedenjske vzorce. Rezultati kažejo na visko natančnost brez potrebe po poseganju
+    v zasebnost vsebine sporočil \cite{6133257}.
     
-    Shirani-Mehra v delu primerja več klasičnih metod strojnega učenja, kot so naivni Bayesov klasifikator, 
-    logistična regresija, naključni gozd in SVM, pri čemer se osredotoča na uporabo različnih tehnik ekstrakcije 
-    značilk.. Njegovi rezultati potrjujejo visoko učinkovitost teh pristopov pri binarni klasifikaciji SMS sporočil \cite{shirani2013}. 
+    Shirani-Mehra v delu primerja več različnih klasičnih metod strojnega učenja, kot so naivni Bayesov klasifikator, 
+    logistična regresija, naključni gozd in SVM. Njegovi rezultati potrjujejo visoko učinkovitost teh 
+    pristopov pri binarni klasifikaciji SMS sporočil \cite{shirani2013}. 
 
-    V zadnjih letih so se pojavili tudi pristopi, ki naslavljajo problem večjezične 
-    klasifikacije besedil z uporabo globokih nevronskih modelov. Modeli, kot sta 
-    večjezični BERT (mBERT) in XLM-R, omogočajo učenje skupnih predstavitev za več
-    jezikov ter prenos znanja med njimi \cite{devlin2019, conneau2020}. Takšni 
-    pristopi omogočajo učenje na enem jeziku in uporabo modela na drugem brez 
+    Akutalni so tudi pristopi, ki naslavljajo problem večjezične klasifikacije besedil z uporabo globokih nevronskih modelov. 
+    Modeli, kot sta večjezični BERT (mBERT) in XLM-R, omogočajo učenje skupnih predstavitev za več jezikov ter prenos znanja 
+    med njimi \cite{devlin2019, conneau2020}. Takšni pristopi omogočajo učenje na enem jeziku in uporabo modela na drugem brez 
     potrebe po obsežnih označenih podatkih v ciljnem jeziku.
 
 \section{Lastna ideja}
