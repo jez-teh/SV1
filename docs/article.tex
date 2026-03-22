@@ -199,31 +199,39 @@
     potrebe po obsežnih označenih podatkih v ciljnem jeziku.
 
 \section{Lastna ideja}
-    Na podlagi pregleda obstoječih pristopov k detekciji vsiljivih SMS sporočil ugotavljamo, da večina metod 
-    temelji na učenju in vrednotenju modelov znotraj enega samega jezika, najpogosteje angleščine~\cite{shirani2013,sethi2017}. 
-    Kot smo izpostavili v prejšnjem poglavju, tak pristop omejuje uporabnost modelov v realnem okolju, kjer se sporočila 
-    pojavljajo v različnih jezikih. Zato v tej nalogi predlagamo uporabo pristopa \textit{zero-shot cross-lingual transfer}, ki omogoča prenos znanja 
-    med jeziki brez dodatnega učenja na ciljnem jeziku~\cite{pires2019, conneau2020}.
- 
-    Pristop temelji na večjezikovnih modelih, kot sta mBERT~\cite{devlin2019} in XLM-RoBERTa~\cite{conneau2020}, ki sta bila 
-    predhodno naučena na besedilih v več kot sto jezikih, vključno s slovenščino. \textit{Zero-shot cross-lingual transfer} omogoča, 
-    da model, naučen izključno na angleških podatkih, razume semantične vzorce v ciljnem jeziku brez kakršnega koli dodatnega 
-    označevanja~\cite{pires2019}. Kot izhodišče reproduciramo eksperimente Shirani-Mehra~\cite{shirani2013} z klasičnimi algoritmi 
-    strojnega učenja, kot so naivni Bayesov klasifikator, SVM in logistična regresija, na angleškem naboru podatkov~\cite{DatasetSpamSMS}. 
-    Ti rezultati služijo kot osnova za primerjavo z našim predlaganim pristopom.
- 
-    Poleg osnovnega \textit{zero-shot} pristopa izvedemo še dve nadgradnji. Prva vključuje primerjavo z metodo \textit{translate-then-classify}, 
-    kjer slovenska sporočila najprej prevedemo v angleščino in nato klasificiramo z modelom, naučenim na angleških podatkih. S tem preverimo, ali 
-    eksplicitno prevajanje izboljša rezultate v primerjavi z neposrednim \textit{cross-lingual} prenosom. Ker namenskega slovenskega nabora podatkov 
-    za neželena SMS sporočila ni na voljo, ustvarimo manjši testni set s programskim prevodom izbranih angleških sporočil, pri čemer oznake ostanejo nespremenjene.
-    Druga nadgradnja pa vključuje \textit{few-shot fine-tuning}, kjer model dodatno prilagodimo z majhnim številom slovenskih primerov (angl. few-shot learning)~\cite{zhao2021closer}.
-    Na ta način analiziramo, kako hitro se model prilagodi novemu jeziku in kolikšna količina ciljnih podatkov zadostuje za opazno izboljšanje zmogljivosti.
- 
-    Predlagani pristop predstavlja pomembno nadgradnjo obstoječih metod~\cite{lota2017systematic}, saj omogoča uporabo modelov v 
-    večjezičnih okoljih brez potrebe po obsežnem označevanju podatkov za vsak posamezen jezik. Takšna rešitev je posebej pomembna za manj 
-    zastopane jezike, kot je slovenščina, kjer so označeni nabori podatkov izjemno omejeni. Z eksperimentalno primerjavo vseh treh pristopov,
-    \textit{zero-shot}, \textit{translate-then-classify} in \textit{few-shot}, s katerimi bomo pridobili vpogled v kompromise med zmogljivostjo, 
-    stroški označevanja in praktično uporabnostjo v večjezičnih okoljih.
+    Na podlagi pregleda obstoječih pristopov k detekciji neželenih SMS sporočil ugotavljamo, da 
+    večina metod temelji na učenju in vrednotenju modelov znotraj enega samega jezika, najpogosteje 
+    angleščine~\cite{shirani2013,sethi2017}. Kot smo izpostavili v prejšnjem poglavju, takšen pristop 
+    omejuje uporabnost modelov v realnem okolju, kjer se sporočila pojavljajo v različnih jezikih. 
+    Zato v tej nalogi predlagamo uporabo pristopa učenja brez primerov (angl. zero-shot learning) 
+    in medjezikovnega prenosa (angl. cross-lingual transfer), ki omogočata prenos znanja med jeziki 
+    brez dodatnega učenja na ciljnem jeziku~\cite{pires2019, conneau2020}.
+
+    Pristop temelji na večjezikovnih modelih, kot sta mBERT~\cite{devlin2019} in XLM-RoBERTa
+    ~\cite{conneau2020}, ki sta bila predhodno naučena na besedilih v več kot sto jezikih, vključno 
+    s slovenščino. Učenje brez primerov in medjezikovni prenos omogočata, da model, naučen izključno 
+    na angleških podatkih, razume semantične vzorce v ciljnem jeziku brez kakršnega koli dodatnega 
+    označevanja~\cite{pires2019}. Kot izhodišče reproduciramo eksperimente Shirani-Mehra~\cite{shirani2013} 
+    s klasičnimi algoritmi strojnega učenja, kot so naivni Bayesov klasifikator, SVM in logistična 
+    regresija, na angleškem naboru podatkov~\cite{DatasetSpamSMS}. Ti rezultati služijo kot osnova za 
+    primerjavo z našim predlaganim pristopom.
+
+    Poleg osnovnega pristopa učenja brez primerov izvedemo še dve nadgradnji. Prva vključuje primerjavo z 
+    metodo prevedi in razvrsti (angl. translate-then-classify), kjer slovenska sporočila najprej prevedemo 
+    v angleščino in jih nato klasificiramo z modelom, naučenim na angleških podatkih. S tem preverimo, ali 
+    eksplicitno prevajanje izboljša rezultate v primerjavi z neposrednim medjezikovnim prenosom. Ker namenskega 
+    slovenskega nabora podatkov za neželena SMS sporočila ni na voljo, ustvarimo manjši testni nabor s strojnim 
+    prevodom izbranih angleških sporočil, pri čemer oznake ostanejo nespremenjene. Druga nadgradnja pa vključuje 
+    učenje z nekaj primeri (angl. few-shot learning) in fino prilagajanje (angl. fine-tuning), kjer model dodatno 
+    prilagodimo z majhnim številom slovenskih primerov~\cite{zhao2021closer}. Na ta način analiziramo, kako hitro 
+    se model prilagodi novemu jeziku in kolikšna količina ciljnih podatkov zadostuje za opazno izboljšanje zmogljivosti.
+
+    Predlagani pristop predstavlja pomembno nadgradnjo obstoječih metod~\cite{lota2017systematic}, saj omogoča uporabo 
+    modelov v večjezičnih okoljih brez potrebe po obsežnem označevanju podatkov za vsak posamezen jezik. Takšna rešitev 
+    je posebej pomembna za manj zastopane jezike, kot je slovenščina, kjer so označeni nabori podatkov izjemno omejeni. 
+    Z eksperimentalno primerjavo vseh treh pristopov — učenja brez primerov, metode prevedi in razvrsti (angl. translate-then-classify) 
+    ter učenja z nekaj primeri (angl. few-shot learning) — bomo pridobili vpogled v kompromise med zmogljivostjo, stroški označevanja 
+    in praktično uporabnostjo v večjezičnih okoljih.
  
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{bibliografija}
