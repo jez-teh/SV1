@@ -144,9 +144,9 @@
 }
 
 
-\begin{abstract}
-    Povzetek
-\end{abstract}
+% \begin{abstract}
+%     Povzetek
+% \end{abstract}
 
 
 \keywords{SMS, neželena sporočila, klasifikacija, strojno učenje, večjezikovni modeli}
@@ -168,7 +168,7 @@
     sporočil, ki temeljijo na različnih algoritmih strojnega učenja, kjer bomo primerjali
     njihovo natančnost, hitrost in učinkovitost. Za učenje modela bomo uporabili javno 
     dostopen nabor podatkov SMS sporočil, ki vsebuje tako 28560 želenih kot 18832 neželenih 
-    oz. vsiljivih sporočil \cite{DatasetSpamSMS}.
+    oziroma vsiljivih sporočil \cite{DatasetSpamSMS}.
 
     V nadaljevanju članka bomo najprej predstavili sorodna dela na področju klasifikacije 
     SMS sporočil, nato pa bomo opisali našo lastno idejo in pristop k reševanju problema 
@@ -177,26 +177,26 @@
 
 \section{Sorodna dela}
     Klasifikacija nezaželenih SMS sporočil se zaradi omejene dolžine besedila in specifičnega
-    sloga jezika, kot so kratice ali emojiji, predsej razlikuje od klasične elektronske pošte.
+    sloga jezika, kot so kratice ali emojiji, predvsem razlikuje od klasične elektronske pošte.
     Kljub temu so prisotne različne raziskave \cite{lota2017systematic}.
 
     Avtorji Xu in sodelavci so se v svoji raziskavi osredotočili na detekcijo brez uporabe 
     vsebine sporočil (angl. non-content features). Namesto analize besedila so preučevali 
-    metapodatke in vedenjske vzorce. Rezultati kažejo na visko natančnost brez potrebe po poseganju
+    metapodatke in vedenjske vzorce. Rezultati kažejo na visoko natančnost brez potrebe po poseganju
     v zasebnost vsebine sporočil \cite{6133257}.
     
-    Shirani-Mehra v delu primerja več različnih klasičnih metod strojnega učenja, kot so naivni Bayesov klasifikator, 
+    Shirani-Mehra v svojem delu primerja več različnih klasičnih metod strojnega učenja, kot so naivni Bayesov klasifikator, 
     logistična regresija, naključni gozd in SVM. Njegovi rezultati potrjujejo visoko učinkovitost teh 
     pristopov pri binarni klasifikaciji SMS sporočil \cite{shirani2013}. 
 
-    Akutalni so tudi pristopi, ki naslavljajo problem večjezične klasifikacije besedil z uporabo globokih nevronskih modelov. 
+    Aktualni so tudi pristopi, ki naslavljajo problem večjezične klasifikacije besedil z uporabo globokih nevronskih modelov. 
     Modeli, kot sta večjezični BERT (mBERT) in XLM-R, omogočajo učenje skupnih predstavitev za več jezikov ter prenos znanja 
     med njimi \cite{devlin2019, conneau2020}. Takšni pristopi omogočajo učenje na enem jeziku in uporabo modela na drugem brez 
     potrebe po obsežnih označenih podatkih v ciljnem jeziku.
 
 \section{Lastna ideja}
     Na podlagi pregleda obstoječih pristopov za detekcijo neželenih SMS sporočil ugotovimo, da večina metod uporablja 
-    učenje in vrednotenje modelov znotraj enega jezika, najpogosteje angleščine~\cite{shirani2013,sethi2017}. Tak 
+    učenje in vrednotenje modelov znotraj enega jezika, najpogosteje v angleščini~\cite{shirani2013,sethi2017}. Takšen 
     pristop omeji uporabo v praksi le na en jezik. To lahko rešimo z uporabo učenja brez primerov (angl. zero-shot learning) 
     in medjezikovni prenos (angl. cross-lingual transfer). Ta pristopa omogočata prenos znanja med jeziki brez dodatnega 
     učenja na ciljnem jeziku~\cite{pires2019, conneau2020}.
@@ -212,8 +212,8 @@
     Slovenska sporočila najprej prevedemo v angleščino, nato jih klasificiramo z modelom, naučenim na angleških podatkih, s 
     čimer preverimo vpliv prevajanja na rezultate. Ker ne obstaja namenski slovenski nabor podatkov za neželena SMS sporočila, 
     ustvarimo manjši testni nabor, kjer lahko uporabimo strojni prevod originalnih angleških sporočil in ohranimo obstoječe
-    oznake. Testiranje bomo izvedli v tudi v drugo smer, torej vzeli bomo slovenska sporočila in jih prevedli v angleščino,
-    nato pa jih klasificirali z modelom, naučenim na angleških podatkih, ter primerjali z klasifikacijo, ki jo dobimo, če jih
+    oznake. Testiranje bomo izvedli tudi v drugo smer, torej vzeli bomo slovenska sporočila in jih prevedli v angleščino,
+    nato pa jih klasificirali z modelom, naučenim na angleških podatkih, ter primerjali s klasifikacijo, ki jo dobimo, če jih
     klasificiramo neposredno v slovenščini.
     Drugi način vključuje učenje z nekaj primeri (angl. few-shot learning) in fino prilagajanje (angl. fine-tuning). Model 
     dodatno prilagodimo z majhnim številom slovenskih primerov~\cite{zhao2021closer}. Tako ocenimo, kako hitro se model 
