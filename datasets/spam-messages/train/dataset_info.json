@@ -1,0 +1,62 @@
+{
+  "builder_name": "csv",
+  "citation": "",
+  "config_name": "default",
+  "dataset_name": "spam-messages",
+  "dataset_size": 57356041,
+  "description": "",
+  "download_checksums": {
+    "hf://datasets/mshenoda/spam-messages@1a15c873c18e04dca75e2a109778e5ddf85d6a50/spam_messages_train.csv": {
+      "num_bytes": 45108305,
+      "checksum": null
+    },
+    "hf://datasets/mshenoda/spam-messages@1a15c873c18e04dca75e2a109778e5ddf85d6a50/spam_messages_val.csv": {
+      "num_bytes": 6038770,
+      "checksum": null
+    },
+    "hf://datasets/mshenoda/spam-messages@1a15c873c18e04dca75e2a109778e5ddf85d6a50/spam_messages_test.csv": {
+      "num_bytes": 5959244,
+      "checksum": null
+    }
+  },
+  "download_size": 57106319,
+  "features": {
+    "label": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "text": {
+      "dtype": "string",
+      "_type": "Value"
+    }
+  },
+  "homepage": "",
+  "license": "",
+  "size_in_bytes": 114462360,
+  "splits": {
+    "train": {
+      "name": "train",
+      "num_bytes": 45309128,
+      "num_examples": 47392,
+      "dataset_name": "spam-messages"
+    },
+    "validation": {
+      "name": "validation",
+      "num_bytes": 6063007,
+      "num_examples": 5923,
+      "dataset_name": "spam-messages"
+    },
+    "test": {
+      "name": "test",
+      "num_bytes": 5983906,
+      "num_examples": 5926,
+      "dataset_name": "spam-messages"
+    }
+  },
+  "version": {
+    "version_str": "0.0.0",
+    "major": 0,
+    "minor": 0,
+    "patch": 0
+  }
+}
