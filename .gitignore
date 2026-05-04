@@ -19,3 +19,5 @@ Thumbs.db
 # Cache files from tokenizers
 cache-*
 __pycache__/
+
+results/
