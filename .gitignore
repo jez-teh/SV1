@@ -15,3 +15,7 @@
 *.swp
 .DS_Store
 Thumbs.db
+
+# Cache files from tokenizers
+cache-*
+__pycache__/
