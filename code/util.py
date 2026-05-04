@@ -110,4 +110,8 @@ def clear_cache(path):
 
 def clear_folder(path):
     for filename in glob.glob(f"{path}/*"):
-        os.remove(filename)
+        if os.path.isdir(filename):
+            clear_folder(filename)
+            os.rmdir(filename)
+        else:
+            os.remove(filename)
