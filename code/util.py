@@ -1,4 +1,4 @@
-from datasets import Dataset
+from datasets import Dataset, load_dataset
 import glob
 import os
 
@@ -10,7 +10,7 @@ import gc
 
 import numpy as np
 
-
+# Legacy load datasets, if pre-split
 def load_datasets(train_path, val_path, test_path, label2id):
     train_dataset = Dataset.from_file(train_path)
     val_dataset = Dataset.from_file(val_path)
@@ -30,6 +30,47 @@ def load_datasets(train_path, val_path, test_path, label2id):
 
     return train_dataset, val_dataset, test_dataset, id2label
 
+
+def load_datasets_from_hf(
+    dataset_name: str,
+    split: str,
+    label2id: dict,
+    train_size: float = 0.8,
+    val_size: float = 0.1,
+    seed: int = 42,
+):
+
+    dataset = load_dataset(dataset_name, split=split)
+
+    split_1 = dataset.train_test_split(test_size=(1.0 - train_size), seed=seed)
+    train_dataset = split_1["train"]
+    rest = split_1["test"]
+
+    rest_total = 1.0 - train_size
+    if rest_total <= 0:
+        raise ValueError("train_size must be < 1.0")
+
+    test_fraction_of_rest = (1.0 - train_size - val_size) / rest_total
+    if not (0.0 < test_fraction_of_rest < 1.0):
+        raise ValueError("train_size and val_size must leave a positive test split.")
+
+    split_2 = rest.train_test_split(test_size=test_fraction_of_rest, seed=seed)
+    val_dataset = split_2["train"]
+    test_dataset = split_2["test"]
+
+    print(f"Loaded datasets (train={len(train_dataset)}, val={len(val_dataset)}, test={len(test_dataset)})")
+
+    id2label = {v: k for k, v in label2id.items()}
+
+    def encode_labels(example):
+        example["label"] = label2id[example["label"]]
+        return example
+
+    train_dataset = train_dataset.map(encode_labels)
+    val_dataset = val_dataset.map(encode_labels)
+    test_dataset = test_dataset.map(encode_labels)
+
+    return train_dataset, val_dataset, test_dataset, id2label
 def tokenize_dataset(dataset, tokenizer, max_length=128):
     def tokenize(example):
         return tokenizer(
@@ -93,7 +134,7 @@ def build_trainer(model, train_dataset, val_dataset,
         num_train_epochs=num_epochs,
         load_best_model_at_end=True,
         metric_for_best_model="f1",
-        report_to="none"  # keeps notebook clean
+        report_to="none"
     )
 
     return Trainer(
