@@ -71,6 +71,8 @@ def load_datasets_from_hf(
     test_dataset = test_dataset.map(encode_labels)
 
     return train_dataset, val_dataset, test_dataset, id2label
+
+
 def tokenize_dataset(dataset, tokenizer, max_length=128):
     def tokenize(example):
         return tokenizer(
@@ -81,6 +83,12 @@ def tokenize_dataset(dataset, tokenizer, max_length=128):
         )
 
     return dataset.map(tokenize, batched=True)
+
+def tokenize_datasets(train_dataset, val_dataset, test_dataset, tokenizer, max_length=128):
+    train_dataset = tokenize_dataset(train_dataset, tokenizer, max_length)
+    val_dataset = tokenize_dataset(val_dataset, tokenizer, max_length)
+    test_dataset = tokenize_dataset(test_dataset, tokenizer, max_length)
+    return train_dataset, val_dataset, test_dataset
 
 def clear_cuda_cache():
     torch.cuda.empty_cache()
