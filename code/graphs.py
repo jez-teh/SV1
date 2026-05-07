@@ -2,6 +2,45 @@ import json
 import matplotlib.pyplot as plt
 import os
 
+
+def plot_confusion_matrix(y_true, y_pred, labels, save_path):
+    try:
+        import numpy as np
+    except Exception as e:
+        raise RuntimeError("numpy is required for confusion matrix plotting") from e
+
+    cm = np.zeros((len(labels), len(labels)), dtype=int)
+    for t, p in zip(y_true, y_pred):
+        cm[int(t)][int(p)] += 1
+
+    plt.figure(figsize=(5, 4))
+    plt.imshow(cm, interpolation="nearest", cmap=plt.cm.Blues)
+    plt.title("Confusion Matrix")
+    plt.colorbar()
+
+    tick_marks = range(len(labels))
+    plt.xticks(tick_marks, labels, rotation=45, ha="right")
+    plt.yticks(tick_marks, labels)
+
+    thresh = cm.max() / 2.0 if cm.max() else 0
+    for i in range(cm.shape[0]):
+        for j in range(cm.shape[1]):
+            plt.text(
+                j,
+                i,
+                format(cm[i, j], "d"),
+                ha="center",
+                va="center",
+                color="white" if cm[i, j] > thresh else "black",
+            )
+
+    plt.ylabel("True")
+    plt.xlabel("Pred")
+    plt.tight_layout()
+    os.makedirs(os.path.dirname(save_path) or ".", exist_ok=True)
+    plt.savefig(save_path)
+    plt.close()
+
 def load_logs(result_dir="./results"):
     log_data = []
     

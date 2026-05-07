@@ -10,6 +10,21 @@ import gc
 
 import numpy as np
 
+
+def _find_latest_subdir(parent_dir: str) -> str:
+    if not os.path.isdir(parent_dir):
+        raise FileNotFoundError(f"Directory not found: {parent_dir}")
+
+    subdirs = [
+        os.path.join(parent_dir, d)
+        for d in os.listdir(parent_dir)
+        if os.path.isdir(os.path.join(parent_dir, d))
+    ]
+    if not subdirs:
+        raise FileNotFoundError(f"No subdirectories found in: {parent_dir}")
+
+    return max(subdirs, key=os.path.getctime)
+
 # Legacy load datasets, if pre-split
 def load_datasets(train_path, val_path, test_path, label2id):
     train_dataset = Dataset.from_file(train_path)
@@ -105,6 +120,48 @@ def load_model_and_tokenizer(model_name: str, num_labels: int):
     )
 
     return model, tokenizer
+
+
+def load_trained_model_and_tokenizer(
+    trained_model_dir: str,
+    num_labels: int,
+    device_map: str | None = None,
+):
+    """Load a *fine-tuned* model + tokenizer from disk."""
+    clear_cuda_cache()
+
+    tokenizer = AutoTokenizer.from_pretrained(trained_model_dir)
+    model = AutoModelForSequenceClassification.from_pretrained(
+        trained_model_dir,
+        num_labels=num_labels,
+        device_map=device_map,
+    )
+    return model, tokenizer
+
+
+def load_latest_trained_model_and_tokenizer(
+    trained_models_root: str = "./trained_models",
+    num_labels: int = 2,
+    device_map: str | None = None,
+):
+    """Load the most recently saved model from `trained_models_root`."""
+    latest_dir = _find_latest_subdir(trained_models_root)
+    model, tokenizer = load_trained_model_and_tokenizer(
+        latest_dir,
+        num_labels=num_labels,
+        device_map=device_map,
+    )
+    return model, tokenizer, latest_dir
+
+
+@torch.inference_mode()
+def predict_labels(trainer: Trainer, dataset):
+    """Run prediction and return (preds, labels)."""
+    output = trainer.predict(dataset)
+    logits = output.predictions
+    labels = output.label_ids
+    preds = np.argmax(logits, axis=-1)
+    return preds, labels
 
 def compute_metrics(eval_pred):
     logits, labels = eval_pred
