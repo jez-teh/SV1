@@ -171,59 +171,99 @@
     sporočil, ki temeljijo na različnih algoritmih strojnega učenja, kjer bomo primerjali
     njihovo natančnost, hitrost in učinkovitost. 
 
-    V nadaljevanju članka bomo najprej predstavili sorodna dela na področju klasifikacije 
-    SMS sporočil, nato pa bomo opisali našo lastno idejo in pristop k reševanju problema 
-    klasifikacije SMS sporočil. Na koncu bomo predstavili rezultate naših eksperimentov in 
-    zaključek.
+    % V nadaljevanju članka bomo najprej predstavili sorodna dela na področju klasifikacije 
+    % SMS sporočil, nato pa bomo opisali našo lastno idejo in pristop k reševanju problema 
+    % klasifikacije SMS sporočil. Na koncu bomo predstavili rezultate naših eksperimentov in 
+    % zaključek.
+
+% \section{Sorodna dela}
+%     Klasifikacija nezaželenih SMS sporočil se zaradi omejene dolžine besedila in specifičnega
+%     sloga jezika, kot so kratice ali emojiji, predvsem razlikuje od klasične elektronske pošte.
+%     Kljub temu so prisotne različne raziskave \cite{lota2017systematic}.
+
+%     Avtorji Xu in sodelavci so se v svoji raziskavi osredotočili na detekcijo brez uporabe 
+%     vsebine sporočil (angl. non-content features). Namesto analize besedila so preučevali 
+%     metapodatke in vedenjske vzorce. Rezultati kažejo na visoko natančnost brez potrebe po poseganju
+%     v zasebnost vsebine sporočil \cite{6133257}.
+    
+%     Shirani-Mehra v svojem delu primerja več različnih klasičnih metod strojnega učenja, kot so naivni Bayesov klasifikator, 
+%     logistična regresija, naključni gozd in SVM. Njegovi rezultati potrjujejo visoko učinkovitost teh 
+%     pristopov pri binarni klasifikaciji SMS sporočil \cite{shirani2013}. 
+
+%     Aktualni so tudi pristopi, ki naslavljajo problem večjezične klasifikacije besedil z uporabo globokih nevronskih modelov. 
+%     Modeli, kot sta večjezični BERT (mBERT) in XLM-R, omogočajo učenje skupnih predstavitev za več jezikov ter prenos znanja 
+%     med njimi \cite{devlin2019, conneau2020}. Takšni pristopi omogočajo učenje na enem jeziku in uporabo modela na drugem brez 
+%     potrebe po obsežnih označenih podatkih v ciljnem jeziku.
+
 
 \section{Sorodna dela}
-    Klasifikacija nezaželenih SMS sporočil se zaradi omejene dolžine besedila in specifičnega
-    sloga jezika, kot so kratice ali emojiji, predvsem razlikuje od klasične elektronske pošte.
-    Kljub temu so prisotne različne raziskave \cite{lota2017systematic}.
 
-    Avtorji Xu in sodelavci so se v svoji raziskavi osredotočili na detekcijo brez uporabe 
-    vsebine sporočil (angl. non-content features). Namesto analize besedila so preučevali 
-    metapodatke in vedenjske vzorce. Rezultati kažejo na visoko natančnost brez potrebe po poseganju
-    v zasebnost vsebine sporočil \cite{6133257}.
-    
-    Shirani-Mehra v svojem delu primerja več različnih klasičnih metod strojnega učenja, kot so naivni Bayesov klasifikator, 
-    logistična regresija, naključni gozd in SVM. Njegovi rezultati potrjujejo visoko učinkovitost teh 
-    pristopov pri binarni klasifikaciji SMS sporočil \cite{shirani2013}. 
+Področje detekcije neželenih SMS sporočil se je skozi leta razvijalo od uporabe enostavnih statističnih metod do kompleksnih arhitektur, temelječih na transformatorjih. Raziskave se ločijo predvsem po tem, ali za klasifikacijo uporabljajo zgolj vsebino sporočila ali pa vključujejo tudi metapodatke.
 
-    Aktualni so tudi pristopi, ki naslavljajo problem večjezične klasifikacije besedil z uporabo globokih nevronskih modelov. 
-    Modeli, kot sta večjezični BERT (mBERT) in XLM-R, omogočajo učenje skupnih predstavitev za več jezikov ter prenos znanja 
-    med njimi \cite{devlin2019, conneau2020}. Takšni pristopi omogočajo učenje na enem jeziku in uporabo modela na drugem brez 
-    potrebe po obsežnih označenih podatkih v ciljnem jeziku.
+Zgodnejši pristopi so se močno opirali na ne-vsebinske lastnosti sporočil. V raziskavi~\cite{6133257} so dokazali, da lahko uporaba metapodatkov, kot so čas pošiljanja, pogostost sporočil in omrežne značilnosti, bistveno pripomore k natančnosti detekcije, še posebej pri uporabi algoritmov, kot so podporni vektorji (SVM). Kljub temu se večina sodobnih raziskav osredotoča na analizo samega besedila, saj so vsebinski vzorci vsiljivih sporočil pogosto bolj univerzalni.
+
+Z vzponom globokega učenja so se pojavile arhitekture, ki bolje razumejo semantiko kratkih besedil. V raziskavi~\cite{9433507} so predstavili model \emph{Spam Transformer}, ki z mehanizmom pozornosti (angl. \emph{attention}) učinkovito naslavlja izzive neformalnega jezika in kratic v SMS sporočilih. Sistematični pregledi področja~\cite{lota2017systematic} kažejo, da so se meje zmogljivosti modelov premaknile predvsem z integracijo prednaučenih jezikovnih modelov.
+
+Kot najsodobnejše izhodišče na tem področju izstopa članek~\cite{inturi2025}. Avtorji v tem delu naslavljajo problem pomanjkanja označenih podatkov v različnih jezikih z uporabo večjezikovnega modela mBERT. Raziskava dokazuje, da je mogoče model, naučen izključno na angleških podatkih, uspešno uporabiti za detekcijo vsiljivih sporočil v strukturno različnih jezikih, kot so hindijščina, telugu in bengalščina, brez kakršnegakoli dodatnega učenja na ciljnih jezikih (angl. \emph{zero-shot learning}).
+
+Vzporedno s tem so druge študije raziskovale jezikovno nevtralnost mBERT-a~\cite{pires2019} in zmogljivost modelov tipa XLM-R~\cite{conneau2020} pri medjezikovnem prenosu znanja. V članku~\cite{zhao2021closer} so dodatno analizirali strategije prilagajanja modelov (angl. \emph{fine-tuning}) in ugotovili, da uporaba majhnega števila primerov (angl. \emph{few-shot learning}) v ciljnem jeziku znatno stabilizira napovedi modela v primerjavi s povsem ničelnim učenjem. Razvoj se v zadnjem času usmerja tudi v optimizacijo teh modelov, kjer se s tehnikami, kot je destilacija znanja v model TinyBERT~\cite{jiao-etal-2020-tinybert}, poskuša ohraniti visoko zmogljivost ob drastičnem zmanjšanju računske zahtevnosti.
+
+
+% \section{Lastna ideja}
+%     Na podlagi pregleda obstoječih pristopov za detekcijo neželenih SMS sporočil ugotovimo, da večina metod uporablja 
+%     učenje in vrednotenje modelov znotraj enega jezika, najpogosteje v angleščini~\cite{shirani2013,sethi2017}. Takšen 
+%     pristop omeji uporabo v praksi le na en jezik. To lahko rešimo z uporabo učenja brez primerov (angl. zero-shot learning) 
+%     in medjezikovni prenos (angl. cross-lingual transfer). Ta pristopa omogočata prenos znanja med jeziki brez dodatnega 
+%     učenja na ciljnem jeziku~\cite{pires2019, conneau2020}.
+
+%     Pristop temelji na večjezikovnih modelih, kot sta mBERT~\cite{devlin2019} in Tiny-BERT~\cite{jiao-etal-2020-tinybert}. 
+%     Modela sta naučena na besedilih v več kot sto jezikih, tudi v slovenščini. Učenje brez primerov in medjezikovni 
+%     prenos omogočata, da model, naučen na angleških podatkih, prepozna semantične vzorce v ciljnem jeziku brez dodatnega 
+%     označevanja~\cite{pires2019}. Za izhodišče reproduciramo eksperimente Shirani-Mehre~\cite{shirani2013}, ki uporabljajo
+%     klasične metode, kot so naivni Bayesov klasifikator, SVM in logistična regresija, na angleškem naboru 
+%     podatkov~\cite{DatasetSpamSMS}. Ti rezultati služijo kot osnova za nadaljnjo primerjavo.
+
+%     Osnovni pristop bomo nadgradili na dva načina. Prvi je metoda prevedi in razvrsti (angl. translate-then-classify). 
+%     Slovenska sporočila najprej prevedemo v angleščino, nato jih klasificiramo z modelom, naučenim na angleških podatkih, s 
+%     čimer preverimo vpliv prevajanja na rezultate. Ker ne obstaja namenski slovenski nabor podatkov za neželena SMS sporočila, 
+%     ustvarimo manjši testni nabor, kjer lahko uporabimo strojni prevod originalnih angleških sporočil in ohranimo obstoječe
+%     oznake. Testiranje bomo izvedli tudi v drugo smer, torej vzeli bomo slovenska sporočila in jih prevedli v angleščino,
+%     nato pa jih klasificirali z modelom, naučenim na angleških podatkih, ter primerjali s klasifikacijo, ki jo dobimo, če jih
+%     klasificiramo neposredno v slovenščini.
+%     Drugi način vključuje učenje z nekaj primeri (angl. few-shot learning) in fino prilagajanje (angl. fine-tuning). Model 
+%     dodatno prilagodimo z majhnim številom slovenskih primerov~\cite{zhao2021closer}. Tako ocenimo, kako hitro se model 
+%     prilagodi novemu jeziku in koliko podatkov zadostuje za izboljšanje.
+
+%     Predlagani pristop izboljša obstoječe metode~\cite{lota2017systematic}. Omogoča uporabo modelov v večjezičnih okoljih 
+%     brez obsežnega označevanja za vsak jezik. To je pomembno za manj zastopane jezike, kot je slovenščina, kjer je podatkov 
+%     malo. Z eksperimentalno primerjavo treh pristopov, učenja brez primerov, metode prevedi in razvrsti ter učenja z nekaj 
+%     primeri, ocenimo razmerje med zmogljivostjo, stroški označevanja in uporabnostjo v praksi.
 
 \section{Lastna ideja}
-    Na podlagi pregleda obstoječih pristopov za detekcijo neželenih SMS sporočil ugotovimo, da večina metod uporablja 
-    učenje in vrednotenje modelov znotraj enega jezika, najpogosteje v angleščini~\cite{shirani2013,sethi2017}. Takšen 
-    pristop omeji uporabo v praksi le na en jezik. To lahko rešimo z uporabo učenja brez primerov (angl. zero-shot learning) 
-    in medjezikovni prenos (angl. cross-lingual transfer). Ta pristopa omogočata prenos znanja med jeziki brez dodatnega 
-    učenja na ciljnem jeziku~\cite{pires2019, conneau2020}.
 
-    Pristop temelji na večjezikovnih modelih, kot sta mBERT~\cite{devlin2019} in XLM-RoBERTa~\cite{conneau2020}. 
-    Modela sta naučena na besedilih v več kot sto jezikih, tudi v slovenščini. Učenje brez primerov in medjezikovni 
-    prenos omogočata, da model, naučen na angleških podatkih, prepozna semantične vzorce v ciljnem jeziku brez dodatnega 
-    označevanja~\cite{pires2019}. Za izhodišče reproduciramo eksperimente Shirani-Mehre~\cite{shirani2013}, ki uporabljajo
-    klasične metode, kot so naivni Bayesov klasifikator, SVM in logistična regresija, na angleškem naboru 
-    podatkov~\cite{DatasetSpamSMS}. Ti rezultati služijo kot osnova za nadaljnjo primerjavo.
+Na podlagi pregleda obstoječih pristopov ugotavljamo, da se večina raziskav osredotoča na detekcijo neželenih 
+sporočil znotraj enega jezika, običajno angleščine~\cite{sethi2017}. Osrednji izziv naše lastne ideje je 
+razširitev teh pristopov v večjezično domeno z uporabo modelov, ki so primerni za uporabo v realnem času 
+na napravah z omejenimi viri. 
 
-    Osnovni pristop bomo nadgradili na dva načina. Prvi je metoda prevedi in razvrsti (angl. translate-then-classify). 
-    Slovenska sporočila najprej prevedemo v angleščino, nato jih klasificiramo z modelom, naučenim na angleških podatkih, s 
-    čimer preverimo vpliv prevajanja na rezultate. Ker ne obstaja namenski slovenski nabor podatkov za neželena SMS sporočila, 
-    ustvarimo manjši testni nabor, kjer lahko uporabimo strojni prevod originalnih angleških sporočil in ohranimo obstoječe
-    oznake. Testiranje bomo izvedli tudi v drugo smer, torej vzeli bomo slovenska sporočila in jih prevedli v angleščino,
-    nato pa jih klasificirali z modelom, naučenim na angleških podatkih, ter primerjali s klasifikacijo, ki jo dobimo, če jih
-    klasificiramo neposredno v slovenščini.
-    Drugi način vključuje učenje z nekaj primeri (angl. few-shot learning) in fino prilagajanje (angl. fine-tuning). Model 
-    dodatno prilagodimo z majhnim številom slovenskih primerov~\cite{zhao2021closer}. Tako ocenimo, kako hitro se model 
-    prilagodi novemu jeziku in koliko podatkov zadostuje za izboljšanje.
+Naš pristop temelji na neposredni rekreaciji in nadgradnji metodologije, predstavljene v članku~\cite{inturi2025}. 
+Medtem ko se omenjeni članek osredotoča na model mBERT~\cite{devlin2019} in prenos znanja na indijske jezike 
+(hindijščina, telugu, bengalščina), mi našo raziskavo razširimo na slovenski jezik ter vpeljemo uporabo 
+kompaktnega modela TinyBERT~\cite{jiao-etal-2020-tinybert}.
 
-    Predlagani pristop izboljša obstoječe metode~\cite{lota2017systematic}. Omogoča uporabo modelov v večjezičnih okoljih 
-    brez obsežnega označevanja za vsak jezik. To je pomembno za manj zastopane jezike, kot je slovenščina, kjer je podatkov 
-    malo. Z eksperimentalno primerjavo treh pristopov, učenja brez primerov, metode prevedi in razvrsti ter učenja z nekaj 
-    primeri, ocenimo razmerje med zmogljivostjo, stroški označevanja in uporabnostjo v praksi.
+Uporaba modela TinyBERT predstavlja ključni del naše rešitve, saj naslavlja potrebo po izvajanju klasifikacije 
+neposredno na mobilnih napravah. S tem zagotavljamo visoko stopnjo zasebnosti (lokalna obdelava), odzivnost brez 
+omrežne povezave in energetsko učinkovitost, kar je za praktično uporabo na telefonih bistveno.
+
+Eksperimentalno evalvacijo izvedemo s primerjavo obeh modelov (mBERT in TinyBERT) na jezikovnem paru 
+angleščina-slovenščina, pri čemer uporabimo naslednje strategije:
+\begin{itemize}
+    \item \textbf{Učenje brez primerov (zero-shot):} Oba modela (večji mBERT in mobilni TinyBERT) naučimo na angleških podatkih ter ju neposredno preizkusimo na slovenskem testnem naboru. S tem ocenimo osnovno sposobnost medjezikovnega prenosa pri različno zahtevnih arhitekturah.
+    \item \textbf{Učenje z nekaj primeri (few-shot):} Modela dodatno fino prilagodimo z majhnim naborom slovenskih sporočil~\cite{zhao2021closer}. Cilj je ugotoviti, v kolikšni meri lahko majhna količina lokalnih podatkov kompenzira manjšo kapaciteto mobilnega modela TinyBERT.
+    \item \textbf{Metoda prevedi in razvrsti (translate-then-classify):} Slovenska sporočila strojno prevedemo v angleščino in jih klasificiramo z angleškim modelom, kar služi kot referenčna točka za oceno kakovosti neposrednega večjezičnega prenosa.
+\end{itemize}
+
+Z združevanjem večjezičnega učenja brez primerov in optimizacije za mobilne naprave naša ideja zapolnjuje vrzel med teoretičnimi modeli in njihovo dejansko uporabnostjo v okoljih z omejenimi viri in specifičnimi jeziki, kot je slovenščina.
 
 \section{Načrt eksperimentov}
     V tem razdelku podamo načrt eksperimentov za primerjavo rezultatov iz literature z rezultati lastnih metod.
