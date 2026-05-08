@@ -38,7 +38,8 @@
 %
 %\acmBooktitle{Woodstock '18: ACM Symposium on Neural Gaze Detection,
 %  June 03--05, 2018, Woodstock, NY} 
-\acmPrice{15.00}
+% \acmPrice je zastarel (ACM ga več ne izpisuje v bibstrip).
+% \acmPrice{15.00}
 \acmISBN{978-1-4503-XXXX-X/18/06}
 
 
@@ -223,6 +224,71 @@
     brez obsežnega označevanja za vsak jezik. To je pomembno za manj zastopane jezike, kot je slovenščina, kjer je podatkov 
     malo. Z eksperimentalno primerjavo treh pristopov, učenja brez primerov, metode prevedi in razvrsti ter učenja z nekaj 
     primeri, ocenimo razmerje med zmogljivostjo, stroški označevanja in uporabnostjo v praksi.
+
+\section{Načrt eksperimentov}
+    V tem razdelku podamo načrt eksperimentov za primerjavo rezultatov iz literature z rezultati lastnih metod.
+    Osnovna referenca za klasične pristope je delo Shirani-Mehra~\cite{shirani2013}, ki poroča rezultate na
+    standardnem angleškem naboru SMS spam/ham~\cite{DatasetSpamSMS}. 
+
+\subsection{Pridobivanje podatkov}
+    Uporabili bomo dva nabora:
+    \begin{itemize}
+        \item \textbf{Angleški nabor (literatura)}: nabor SMS sporočil z oznakami \emph{spam/ham}, uporabljen v~\cite{shirani2013}.
+        To je osnovni nabor za reprodukcijo rezultatov in za učenje modelov.
+        \item \textbf{Slovenski testni nabor (naš prispevek)}: ker namenski slovenski nabor ni splošno uveljavljen,
+        pripravimo testni nabor s strojno prevedenimi sporočili iz angleškega nabora v slovenščino.
+        Ohranimo originalne oznake, saj prevod ne spremeni namena sporočila (neželena/željena vsebina).
+    \end{itemize}
+    Pri prevodu izločimo primere, ki vsebujejo zgolj URL-je ali zelo specifične šifre (kjer prevod ne doda vsebine),
+    ter primere, ki postanejo prazni/nerazumljivi. Pri tem natančno zabeležimo število izločenih primerov.
+
+\subsection{Priprava okolja}
+    Eksperiment izvedemo v jeziku Python. Okolje vključuje:
+    \begin{itemize}
+        \item knjižnice za klasično strojno učenje (npr. vektorizacija besedila in linearni modeli),
+        \item knjižnice za delo z večjezikovnimi transformerskimi modeli (mBERT, XLM-R),
+        \item podporo za prevajanje (model ali storitev) za pristop prevedi in razvrsti,
+        \item deterministične nastavitve (fiksni \texttt{seed}) in zapis konfiguracije (verzije knjižnic, parametri).
+    \end{itemize}
+    Za pošteno primerjavo poročamo tudi približen čas učenja in čas inferenciranja na testnem delu.
+
+\subsection{Izvedba eksperimenta}
+    Definiramo tri scenarije in več metod; vsi rezultati se merijo na istem razrezu podatkov.
+
+    \paragraph{Razrez podatkov.}
+    Angleški nabor razdelimo na učno, validacijsko in testno množico (npr. 80/10/10).
+    Pri klasičnih pristopih uporabimo $k$-kratno navzkrižno validacijo (npr. $k=5$), da je primerjava z~\cite{shirani2013}
+    čim bolj stabilna. Slovenski nabor uporabljamo kot \emph{zunanji test} za oceno prenosa.
+
+    \paragraph{Metode (baseline in naši pristopi).}
+    \begin{enumerate}
+        \item \textbf{Klasični baseline (reprodukcija literature)}: TF-IDF predstavitev besedila in modeli,
+        ki so opisani v~\cite{shirani2013} (naivni Bayes, logistična regresija, SVM, naključni gozd).
+        Cilj je doseči primerljive metrike na angleškem testu.
+        \item \textbf{Učenje brez primerov / medjezikovni prenos (zero-shot)}: večjezikovni model (mBERT ali XLM-R)
+        naučimo na angleških podatkih in ga brez dodatnega učenja ovrednotimo na slovenskem testu.
+        \item \textbf{Prevedi in razvrsti (translate-then-classify)}: slovenska sporočila prevedemo v angleščino in jih
+        klasificiramo z modelom, naučenim na angleščini. Primerjamo z neposredno klasifikacijo v slovenščini.
+        \item \textbf{Učenje z nekaj primeri (few-shot fine-tuning)}: iz slovenskega nabora vzamemo majhen označen del
+        (npr. 10, 50, 100 primerov) in izvedemo dodatno fino prilagajanje; preostanek slovenske množice ostane za test.
+    \item \textbf{Lastna ideja -- ansambel prenosnih pristopov}: zgradimo enostaven ansambel, ki združi napovedi
+        dveh pristopov (npr. \emph{zero-shot} in \emph{translate-then-classify}). Združevanje izvedemo z večinskim glasovanjem
+        ali z uteženim povprečenjem verjetnosti (uteži določimo na validaciji). Hipoteza je, da prevod pomaga pri idiomih in
+        lokalnih zapisih, medtem ko zero-shot bolje ohranja semantiko pri kratkih sporočilih.
+    \end{enumerate}
+
+\subsection{Metrike in primerjava z literaturo}
+    Primarna metrika je \textbf{F1} za razred \emph{spam}, saj so podatki navadno neuravnoteženi.
+    Poleg tega poročamo \textbf{natančnost} (accuracy), \textbf{precision}, \textbf{recall} in \textbf{konfuzijsko matriko}.
+    Za primerjavo z literaturo rezultate klasičnih metod poročamo na angleškem testu in jih neposredno primerjamo z rezultati
+    iz~\cite{shirani2013} (po možnosti tudi z enakim protokolom validacije).
+    Za medjezikovni del poročamo padec/izboljšanje glede na angleški test:
+    \begin{itemize}
+        \item zero-shot (EN\,$\rightarrow$\,SL),
+        \item prevedi in razvrsti (SL\,$\rightarrow$\,EN\,$\rightarrow$\,klasifikacija),
+        \item few-shot (SL fine-tuning s $n$ primeri).
+    \end{itemize}
+    Rezultate dopolnimo s časom inferenciranja, saj je v praksi pomembna tudi hitrost.
  
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{bibliografija}
