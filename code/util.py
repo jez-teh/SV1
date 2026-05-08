@@ -181,24 +181,34 @@ def compute_metrics(eval_pred):
     }
 
 
-def build_trainer(model, train_dataset, val_dataset,
-                  learning_rate=2e-5,
-                  num_epochs=3,
-                  per_device_train_batch_size=4,
-                  per_device_eval_batch_size=4):
+def build_trainer(
+    model,
+    train_dataset,
+    val_dataset,
+    learning_rate=2e-5,
+    num_epochs=3,
+    per_device_train_batch_size=4,
+    per_device_eval_batch_size=4,
+    output_dir="./results",
+    logging_steps=50,
+    save_total_limit=2,
+    metric_for_best_model="f1",
+    load_best_model_at_end=True,
+):
 
     args = TrainingArguments(
-        output_dir="./results",
+        output_dir=output_dir,
         eval_strategy="epoch",
         save_strategy="epoch",
         logging_strategy="steps",
-        logging_steps=50,
+        logging_steps=logging_steps,
         learning_rate=learning_rate,
         per_device_train_batch_size=per_device_train_batch_size,
         per_device_eval_batch_size=per_device_eval_batch_size,
         num_train_epochs=num_epochs,
-        load_best_model_at_end=True,
-        metric_for_best_model="f1",
+        load_best_model_at_end=load_best_model_at_end,
+        metric_for_best_model=metric_for_best_model,
+        save_total_limit=save_total_limit,
         report_to="none"
     )
 

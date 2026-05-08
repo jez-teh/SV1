@@ -1,6 +1,7 @@
 import json
 import matplotlib.pyplot as plt
 import os
+import csv
 
 
 def plot_confusion_matrix(y_true, y_pred, labels, save_path):
@@ -109,3 +110,55 @@ def plot_loss_and_metrics(log_history, save_path="./graphs"):
 def generate_all_plots(result_dir="./results", save_path="./graphs"):
     logs = load_logs(result_dir)
     plot_loss_and_metrics(logs, save_path)
+
+
+def plot_fewshot_comparison(results_csv, save_path="./graphs", metric="f1"):
+    """Plot a few-shot comparison curve from the CSV written by the notebook.
+
+    Expected columns:
+    few_shot_k, accuracy, precision, recall, f1, train_size, val_size, checkpoint_dir
+    """
+    os.makedirs(save_path, exist_ok=True)
+
+    if metric not in {"accuracy", "precision", "recall", "f1"}:
+        raise ValueError("metric must be one of: accuracy, precision, recall, f1")
+
+    if not os.path.exists(results_csv):
+        raise FileNotFoundError(f"Few-shot results CSV not found: {results_csv}")
+
+    rows = []
+    with open(results_csv, newline="") as handle:
+        reader = csv.DictReader(handle)
+        for row in reader:
+            try:
+                rows.append(
+                    {
+                        "few_shot_k": int(row["few_shot_k"]),
+                        "accuracy": float(row["accuracy"]),
+                        "precision": float(row["precision"]),
+                        "recall": float(row["recall"]),
+                        "f1": float(row["f1"]),
+                    }
+                )
+            except (KeyError, TypeError, ValueError) as exc:
+                raise ValueError(f"Invalid row in few-shot CSV: {row}") from exc
+
+    if not rows:
+        raise ValueError(f"No rows found in few-shot CSV: {results_csv}")
+
+    rows.sort(key=lambda item: item["few_shot_k"])
+    x = [item["few_shot_k"] for item in rows]
+    y = [item[metric] for item in rows]
+
+    plt.figure(figsize=(7, 4))
+    plt.plot(x, y, marker="o", linewidth=2)
+    plt.title(f"Few-shot comparison ({metric})")
+    plt.xlabel("few_shot_k")
+    plt.ylabel(metric)
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+    out_path = os.path.join(save_path, f"fewshot_comparison_{metric}.png")
+    plt.savefig(out_path)
+    plt.close()
+
+    return out_path
