@@ -1,4 +1,5 @@
 from datasets import Dataset, load_dataset
+from datasets import ClassLabel
 import glob
 import os
 
@@ -57,7 +58,11 @@ def load_datasets_from_hf(
 
     dataset = load_dataset(dataset_name, split=split)
 
-    split_1 = dataset.train_test_split(test_size=(1.0 - train_size), seed=seed)
+
+    split_1 = dataset.train_test_split(
+        test_size=(1.0 - train_size),
+        seed=seed,
+    )
     train_dataset = split_1["train"]
     rest = split_1["test"]
 
@@ -69,7 +74,10 @@ def load_datasets_from_hf(
     if not (0.0 < test_fraction_of_rest < 1.0):
         raise ValueError("train_size and val_size must leave a positive test split.")
 
-    split_2 = rest.train_test_split(test_size=test_fraction_of_rest, seed=seed)
+    split_2 = rest.train_test_split(
+        test_size=test_fraction_of_rest,
+        seed=seed,
+    )
     val_dataset = split_2["train"]
     test_dataset = split_2["test"]
 
@@ -168,7 +176,10 @@ def compute_metrics(eval_pred):
     preds = np.argmax(logits, axis=-1)
 
     precision, recall, f1, _ = precision_recall_fscore_support(
-        labels, preds, average="binary"
+        labels,
+        preds,
+        average="binary",
+        zero_division=0,
     )
 
     acc = accuracy_score(labels, preds)
@@ -194,6 +205,7 @@ def build_trainer(
     save_total_limit=2,
     metric_for_best_model="f1",
     load_best_model_at_end=True,
+    seed: int = 42,
 ):
 
     args = TrainingArguments(
@@ -209,6 +221,8 @@ def build_trainer(
         load_best_model_at_end=load_best_model_at_end,
         metric_for_best_model=metric_for_best_model,
         save_total_limit=save_total_limit,
+        seed=seed,
+        data_seed=seed,
         report_to="none"
     )
 

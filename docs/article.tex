@@ -276,6 +276,11 @@ Eksperimente smo izvedli na dveh naborih, velikosti 55404 SMS sporočil z binarn
 (neželena sporočila). Podatke smo pridobili iz javno dostopnega nabora~\cite{DatasetSpamSMS}, ki vsebuje angleška sporočila, ter iz novega slovenskega 
 nabora~\cite{SMSSpamSlovene}, ki smo ga ustvarili z prevajanjem originalnega angleškega nabora in ročnim označevanjem.
 
+\subsubsection{Delitev na učno/validacijsko/testno množico}
+Oba nabora smo razdelili na tri nepodvojene dele: \textbf{učno množico} (80\%), \textbf{validacijsko množico} (10\%) in \textbf{testno množico} (10\%).
+Delitev je bila izvedena z determinističnim naključnim semenom (seed = 42), da zagotovimo ponovljivost rezultatov.
+Validacijsko množico uporabljamo izključno za spremljanje učenja in izbiro najboljše različice modela, medtem ko končne metrike poročamo na testni množici.
+
 \subsection{Izvedba eksperimenta}
 
     Eksperiment izvedemo v jeziku Python s knjižnicami HuggingFace za delo z transformatorskimi modeli.
@@ -293,8 +298,25 @@ nabora~\cite{SMSSpamSlovene}, ki smo ga ustvarili z prevajanjem originalnega ang
     \item \textbf{Vizualizacija in analiza}: Za vse kombinacije modelov in pristopov smo izračunali metrike (F1, natančnost, priklic) ter generirali konfuzijske matrike in grafe za primerjavo zmogljivosti glede na velikost modela.
 \end{enumerate}
 
+\subsubsection{Eksperimentalni scenariji}
+Za oceno medjezikovnega prenosa znanja obravnavamo tri scenarije:
+\begin{itemize}
+    \item \textbf{In-language (EN $\rightarrow$ EN):} učenje in testiranje na angleškem naboru, kar predstavlja referenčno točko za zgornjo mejo zmogljivosti.
+    \item \textbf{Zero-shot (EN $\rightarrow$ SL):} model naučimo na angleških podatkih in ga brez dodatnega učenja ovrednotimo na slovenskem testu.
+    \item \textbf{Few-shot (EN $\rightarrow$ SL + $k$):} model, naučen na angleščini, dodatno fino prilagodimo na $k$ slovenskih primerih in nato ovrednotimo na celotnem slovenskem testu.
+\end{itemize}
+
+\subsubsection{Nastavitve učenja (hiperparametri)}
+Modele smo učili z ogrodjem HuggingFace \texttt{Trainer}. Pri vseh eksperimentih smo uporabljali največjo dolžino zaporedja \texttt{max\_length = 128}.
+Privzete nastavitve učenja so bile: stopnja učenja $2\cdot 10^{-5}$, $3$ epohe in velikost paketa 4 na napravo.
+Pri few-shot eksperimentih smo zaradi majhnega števila učnih primerov uporabljali večjo velikost paketa (8) in spremljali metriko \textbf{F1} za razred \emph{spam} kot kriterij za izbiro najboljše različice modela (\emph{best model}).
+
+\subsubsection{Ponovljivost}
+Za ponovljivost eksperimentov smo fiksirali naključno seme pri delitvi naborov. Poleg tega za vsak zagon shranimo naučeni model in tokenizer ter generiramo graf učenja (izguba in metrike) in konfuzijsko matriko, kar omogoča naknadno preverjanje rezultatov.
+
 \subsection{Metrike in rezultati}
     Uporabljamo \textbf{natančnost} (accuracy), \textbf{precision}, \textbf{recall} in \textbf{F1} za razred \emph{spam}. 
+    Vrednosti precision/recall/F1 računamo kot binarne metrike, kjer je pozitivni razred \emph{spam} (oznaka 1).
     Medjezikovni prenos znanja merimo s primerjavo zero-shot in few-shot scenarijev na slovenskem testnem naboru.
  
 \bibliographystyle{ACM-Reference-Format}
