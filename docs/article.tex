@@ -167,9 +167,9 @@
     neželenih, saj jih pošiljajo različni ponudniki storitev in prevaranti, da bi nam 
     prodali svoje izdelke ali storitve. Ravno zaradi tega je pomembno, da imamo učinkovite 
     metode za klasifikacijo SMS sporočil, da lahko ločimo med želenimi in neželenimi 
-    sporočili. Cilj tega članka je predstaviti štiri različne metode klasifikacije SMS 
+    sporočili. Cilj tega članka je predstaviti različne metode klasifikacije SMS 
     sporočil, ki temeljijo na različnih algoritmih strojnega učenja, kjer bomo primerjali
-    njihovo natančnost, hitrost in učinkovitost. 
+    njihovo natančnost. 
 
     % V nadaljevanju članka bomo najprej predstavili sorodna dela na področju klasifikacije 
     % SMS sporočil, nato pa bomo opisali našo lastno idejo in pristop k reševanju problema 
@@ -260,7 +260,6 @@ angleščina-slovenščina, pri čemer uporabimo naslednje strategije:
 \begin{itemize}
     \item \textbf{Učenje brez primerov (zero-shot):} Oba modela (večji mBERT in mobilni TinyBERT) naučimo na angleških podatkih ter ju neposredno preizkusimo na slovenskem testnem naboru. S tem ocenimo osnovno sposobnost medjezikovnega prenosa pri različno zahtevnih arhitekturah.
     \item \textbf{Učenje z nekaj primeri (few-shot):} Modela dodatno fino prilagodimo z majhnim naborom slovenskih sporočil~\cite{zhao2021closer}. Cilj je ugotoviti, v kolikšni meri lahko majhna količina lokalnih podatkov kompenzira manjšo kapaciteto mobilnega modela TinyBERT.
-    \item \textbf{Metoda prevedi in razvrsti (translate-then-classify):} Slovenska sporočila strojno prevedemo v angleščino in jih klasificiramo z angleškim modelom, kar služi kot referenčna točka za oceno kakovosti neposrednega večjezičnega prenosa.
 \end{itemize}
 
 Z združevanjem večjezičnega učenja brez primerov in optimizacije za mobilne naprave naša ideja zapolnjuje vrzel med teoretičnimi modeli in njihovo dejansko uporabnostjo v okoljih z omejenimi viri in specifičnimi jeziki, kot je slovenščina.
@@ -293,7 +292,6 @@ Validacijsko množico uporabljamo izključno za spremljanje učenja in izbiro na
 \begin{enumerate}
     \item \textbf{Učenje na angleškem naboru}: Za vsak model (mBERT, TinyBERT) smo izvedli fino prilagajanje na angleških podatkih.
     \item \textbf{Učenje brez primerov (zero-shot)}: Modele, naučene izključno na angleščini, smo neposredno ovrednotili na slovenskem testnem naboru. S tem smo preverili osnovno sposobnost medjezikovnega prenosa znanja brez dodatnih lokalnih podatkov~\cite{pires2019}.
-    \item \textbf{Prevedi in razvrsti (translate-then-classify)}: Slovenska sporočila smo strojno prevedli v angleščino in jih klasificirali z modeli, naučenimi na angleških podatkih, kar služi kot primerjava za vpliv kakovosti prevoda na detekcijo.
     \item \textbf{Učenje z nekaj primeri (few-shot)}: Modele smo dodatno fino prilagodili z majhnim naborom slovenskih primerov $k \in \{10, 50, 100, 200\}$~\cite{zhao2021closer}. Pri tem smo posebej spremljali, kako hitro se na majhnem številu podatkov odzove mobilni model TinyBERT v primerjavi z večjimi modeli.
     \item \textbf{Vizualizacija in analiza}: Za vse kombinacije modelov in pristopov smo izračunali metrike (F1, natančnost, priklic) ter generirali konfuzijske matrike in grafe za primerjavo zmogljivosti glede na velikost modela.
 \end{enumerate}
