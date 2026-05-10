@@ -285,8 +285,8 @@ Validacijsko množico uporabljamo izključno za spremljanje učenja in izbiro na
 
     Eksperiment izvedemo v jeziku Python s knjižnicami HuggingFace za delo z transformatorskimi modeli.
     Vse modele smo naučili na angleškem naboru ter jih preizkusili na slovenskem naboru kot zunanjem testu za oceno medjezikovnega prenosa.
-    V eksperimentih smo primerjali tri večjezikovne transformatorske modele: mBERT (110M parametrov)~\cite{devlin2019}, 
-    XLM-RoBERTa (270M parametrov)~\cite{conneau2020} in TinyBERT (15M parametrov)~\cite{jiao-etal-2020-tinybert} za mobilne naprave.
+    V eksperimentih smo primerjali sva večjezikovna transformatorska modela: mBERT (110M parametrov)~\cite{devlin2019}
+    in TinyBERT (15M parametrov)~\cite{jiao-etal-2020-tinybert} za mobilne naprave.
 
     Eksperiment je bil izveden v naslednjih korakih:
 
@@ -318,7 +318,119 @@ Za ponovljivost eksperimentov smo fiksirali naključno seme pri delitvi naborov.
     Uporabljamo \textbf{natančnost} (accuracy), \textbf{precision}, \textbf{recall} in \textbf{F1} za razred \emph{spam}. 
     Vrednosti precision/recall/F1 računamo kot binarne metrike, kjer je pozitivni razred \emph{spam} (oznaka 1).
     Medjezikovni prenos znanja merimo s primerjavo zero-shot in few-shot scenarijev na slovenskem testnem naboru.
- 
+
+\section{Rezultati}
+
+V tem razdelku predstavljamo rezultate eksperimentov z različnimi večjezičnimi transformatorskimi modeli in scenariji učenja.
+
+\subsection{Rezultati učenja brez primerov (Zero-shot)}
+
+Tabela~\ref{tab:zero_shot} prikazuje rezultate evaluacije modelov na slovenskem testnem naboru, pri čemer so bili modeli naučeni izključno na angleških podatkih. Ti rezultati prikažejo osnovno zmogljivost medjezikovnega prenosa znanja brez dodatnih slovenskih podatkov.
+
+\begin{table}[h]
+\centering
+\caption{Rezultati zero-shot scenarija (EN $\rightarrow$ SL): modeli naučeni na angleščini, testirani na slovenščini.}
+\label{tab:zero_shot}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Model} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} \\
+\midrule
+mBERT & 0.9664 & 0.9575 & 0.9520 & 0.9547 \\
+TinyBERT & 0.9211 & 0.9199 & 0.8632 & 0.8906 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Rezultati učenja z nekaj primeri (Few-shot adaptation)}
+
+Eksperimente učenja z nekaj primeri smo izvedli z namenom, da preverimo, kako hitro se modeli prilagodijo slovenskim podatkom ob majhnem številu primerov. Modele smo dodatno fino prilagodili z nabori različnih velikosti: $k \in \{10, 50, 100, 200\}$ slovenskih primerov.
+
+\paragraph{Few-shot rezultati mBERT modela}
+
+Tabela~\ref{tab:mbert_fewshot} prikazuje rezultate fine-tuning-a mBERT modela (110M parametrov) na različnih velikostih few-shot naborov.
+
+\begin{table}[h]
+\centering
+\caption{Few-shot rezultati mBERT modela na slovenskem testnem naboru ($k$ = število učnih primerov).}
+\label{tab:mbert_fewshot}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{k} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} \\
+\midrule
+0 (zero-shot) & 0.9664 & 0.9575 & 0.9520 & 0.9547 \\
+10 & 0.9666 & 0.9603 & 0.9495 & 0.9549 \\
+50 & 0.9659 & 0.9615 & 0.9461 & 0.9538 \\
+100 & 0.9672 & 0.9563 & 0.9554 & 0.9558 \\
+200 & 0.9668 & 0.9532 & 0.9578 & 0.9555 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\newpage
+
+\paragraph{Few-shot rezultati TinyBERT modela}
+
+Tabela~\ref{tab:tinybert_fewshot} prikazuje rezultate fine-tuning-a TinyBERT modela (15M parametrov) na različnih velikostih few-shot naborov. TinyBERT je znatno manjši model, namenjen mobilnim aplikacijam.
+
+\begin{table}[h]
+\centering
+\caption{Few-shot rezultati TinyBERT modela na slovenskem testnem naboru ($k$ = število učnih primerov).}
+\label{tab:tinybert_fewshot}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{k} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} \\
+\midrule
+0 (zero-shot) & 0.9211 & 0.9199 & 0.8632 & 0.8906 \\
+10 & 0.8993 & 0.9625 & 0.7589 & 0.8486 \\
+50 & 0.9072 & 0.9328 & 0.8088 & 0.8664 \\
+100 & 0.9204 & 0.9254 & 0.8549 & 0.8888 \\
+200 & 0.9013 & 0.9442 & 0.7807 & 0.8547 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Primerjava mBERT in TinyBERT}
+
+Slika~\ref{fig:bert_tinybert_comparison} prikazuje primerjavo F1 metrike obeh modelov glede na število few-shot primerov ($k$).
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.95\columnwidth]{../code/graphs/bert_tinybert_k_comparison/bert_tinybert_f1.png}
+\caption{Primerjava F1 metrike med mBERT in TinyBERT modelom glede na število few-shot primerov.}
+\label{fig:bert_tinybert_comparison}
+\end{figure}
+
+\subsubsection{Rezultati po vrednosti $k$}
+
+Tabela~\ref{tab:per_k_comparison} prikazuje F1 vrednosti obeh modelov za različne nastavitve $k$.
+
+\begin{table}[h]
+\centering
+\caption{F1 vrednosti mBERT in TinyBERT po vrednosti $k$.}
+\label{tab:per_k_comparison}
+\begin{tabular}{rccc}
+\toprule
+\textbf{k} & \textbf{mBERT F1} & \textbf{TinyBERT F1} & \textbf{F1 razlika} \\
+\midrule
+0 & 0.9547 & 0.8906 & 0.0641 \\
+10 & 0.9549 & 0.8486 & 0.1063 \\
+50 & 0.9538 & 0.8664 & 0.0874 \\
+100 & 0.9558 & 0.8888 & 0.0670 \\
+200 & 0.9555 & 0.8547 & 0.1008 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Opažanja s primerjave:
+\begin{itemize}
+    \item mBERT dosega F1 vrednosti med 0.9538 in 0.9558 v vseh testiranih scenarijih.
+    \item TinyBERT dosega nižje F1 vrednosti, v razponu med 0.8486 in 0.8906.
+    \item Razlika v F1 med modeloma se giblje med 0.0641 (pri $k=0$) in 0.1063 (pri $k=10$).
+    \item Pri $k=100$ je razlika najmanjša (0.0670), pri $k=10$ je največja (0.1063).
+    \item obe modela pri večjih vrednostih $k$ (50, 100, 200) v povprečju ohranita višje F1 vrednosti kot pri manjših vrednostih ($k=10$).
+\end{itemize}
+
+% Sekcija "Analiza napak" je odstranjena (vsebine analiz bodo v ločeni sekciji).
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{bibliografija}
 
