@@ -1,0 +1,21 @@
+# Core ML stack
+numpy>=1.26
+scikit-learn>=1.4
+torch>=2.2
+transformers>=4.40
+accelerate>=0.30
+safetensors>=0.4
+
+# Dataset loading from Hugging Face Hub
+datasets>=2.19
+huggingface-hub>=0.23
+
+# Tokenizers used by selected multilingual models
+sentencepiece>=0.2
+
+# Plotting
+matplotlib>=3.8
+
+# Notebook support
+jupyter>=1.0
+ipykernel>=6.29
