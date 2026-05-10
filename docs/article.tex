@@ -325,6 +325,22 @@ V tem razdelku predstavljamo rezultate eksperimentov z različnimi večjezičnim
 
 \subsection{Rezultati učenja brez primerov (Zero-shot)}
 
+Kot referenčno točko za oceno zmogljivosti modelov vključimo tudi scenarij EN $\rightarrow$ EN, kjer sta učenje in testiranje izvedena na angleškem naboru. Ta primer predstavlja zgornjo mejo zmogljivosti modelov v okolju brez medjezikovnega prenosa.
+
+\begin{table}[h]
+\centering
+\caption{Rezultati scenarija EN $\rightarrow$ EN: modeli naučeni in testirani na angleščini.}
+\label{tab:english_in_language}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Model} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} \\
+\midrule
+mBERT & 0.9664 & 0.9575 & 0.9520 & 0.9547 \\
+TinyBERT & 0.9778 & 0.9614 & 0.9796 & 0.970 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 Tabela~\ref{tab:zero_shot} prikazuje rezultate evaluacije modelov na slovenskem testnem naboru, pri čemer so bili modeli naučeni izključno na angleških podatkih. Ti rezultati prikažejo osnovno zmogljivost medjezikovnega prenosa znanja brez dodatnih slovenskih podatkov.
 
 \begin{table}[h]
