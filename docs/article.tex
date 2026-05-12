@@ -171,6 +171,19 @@
     sporočil, ki temeljijo na različnih algoritmih strojnega učenja, kjer bomo primerjali
     njihovo natančnost. 
 
+    Problem detekcije neželenih SMS sporočil se pomembno razlikuje od klasifikacije elektronske pošte in 
+    drugih oblik spletne komunikacije zaradi specifičnih lastnosti samega medija. SMS sporočila so bistveno 
+    krajša, pogosto vsebujejo neformalni jezik, kratice, fonetične zapise, emojije ter namerne pravopisne napake, 
+    ki jih pošiljatelji uporabljajo za obhod filtrov~\cite{lota2017systematic}. Zaradi omejene dolžine 
+    besedila imajo modeli na voljo manj semantičnega konteksta kot pri elektronski pošti, kjer so prisotni daljši stavki, 
+    zadeve sporočil, HTML struktura in metapodatki~\cite{Jain2018SpamDO}. Poleg tega SMS komunikacija pogosto vključuje 
+    mobilno-specifične značilnosti, kot so telefonske številke, časovni vzorci pošiljanja in omrežni podatki, ki 
+    jih pri elektronski pošti ni ali pa imajo drugačno strukturo~\cite{6133257}. Raziskave kažejo tudi, da se spam v 
+    SMS okolju hitreje prilagaja filtrom z uporabo kratkih dinamičnih sporočil in socialnega inženiringa, zaradi 
+    česar je generalizacija modelov težja kot pri tradicionalni e-pošti~\cite{Jain2018SpamDO}. Zaradi teh 
+    razlogov metode, razvite za detekcijo neželene elektronske pošte, pogosto niso neposredno prenosljive na SMS 
+    domeno brez dodatnih prilagoditev modelov in predobdelave besedila.
+
     % V nadaljevanju članka bomo najprej predstavili sorodna dela na področju klasifikacije 
     % SMS sporočil, nato pa bomo opisali našo lastno idejo in pristop k reševanju problema 
     % klasifikacije SMS sporočil. Na koncu bomo predstavili rezultate naših eksperimentov in 
@@ -198,15 +211,30 @@
 
 \section{Sorodna dela}
 
-Področje detekcije neželenih SMS sporočil se je skozi leta razvijalo od uporabe enostavnih statističnih metod do kompleksnih arhitektur, temelječih na transformatorjih. Raziskave se ločijo predvsem po tem, ali za klasifikacijo uporabljajo zgolj vsebino sporočila ali pa vključujejo tudi metapodatke.
+Področje detekcije neželenih SMS sporočil se je skozi leta razvijalo od uporabe enostavnih statističnih metod do kompleksnih arhitektur, 
+temelječih na transformatorjih. Raziskave se ločijo predvsem po tem, ali za klasifikacijo uporabljajo zgolj vsebino sporočila ali pa 
+vključujejo tudi metapodatke.
 
-Zgodnejši pristopi so se močno opirali na ne-vsebinske lastnosti sporočil. V raziskavi~\cite{6133257} so dokazali, da lahko uporaba metapodatkov, kot so čas pošiljanja, pogostost sporočil in omrežne značilnosti, bistveno pripomore k natančnosti detekcije, še posebej pri uporabi algoritmov, kot so podporni vektorji (SVM). Kljub temu se večina sodobnih raziskav osredotoča na analizo samega besedila, saj so vsebinski vzorci vsiljivih sporočil pogosto bolj univerzalni.
+Zgodnejši pristopi so se močno opirali na ne-vsebinske lastnosti sporočil. V raziskavi~\cite{6133257} so dokazali, da lahko uporaba 
+metapodatkov, kot so čas pošiljanja, pogostost sporočil in omrežne značilnosti, bistveno pripomore k natančnosti detekcije, še posebej 
+pri uporabi algoritmov, kot so podporni vektorji (SVM). Kljub temu se večina sodobnih raziskav osredotoča na analizo samega besedila, 
+saj so vsebinski vzorci vsiljivih sporočil pogosto bolj univerzalni.
 
-Z vzponom globokega učenja so se pojavile arhitekture, ki bolje razumejo semantiko kratkih besedil. V raziskavi~\cite{9433507} so predstavili model \emph{Spam Transformer}, ki z mehanizmom pozornosti (angl. \emph{attention}) učinkovito naslavlja izzive neformalnega jezika in kratic v SMS sporočilih. Sistematični pregledi področja~\cite{lota2017systematic} kažejo, da so se meje zmogljivosti modelov premaknile predvsem z integracijo prednaučenih jezikovnih modelov.
+Z vzponom globokega učenja so se pojavile arhitekture, ki bolje razumejo semantiko kratkih besedil. V raziskavi~\cite{9433507} so 
+predstavili model \emph{Spam Transformer}, ki z mehanizmom pozornosti (angl. \emph{attention}) učinkovito naslavlja izzive neformalnega 
+jezika in kratic v SMS sporočilih. Sistematični pregledi področja~\cite{lota2017systematic} kažejo, da so se meje zmogljivosti modelov 
+premaknile predvsem z integracijo prednaučenih jezikovnih modelov.
 
-Kot najsodobnejše izhodišče na tem področju izstopa članek~\cite{inturi2025}. Avtorji v tem delu naslavljajo problem pomanjkanja označenih podatkov v različnih jezikih z uporabo večjezikovnega modela mBERT. Raziskava dokazuje, da je mogoče model, naučen izključno na angleških podatkih, uspešno uporabiti za detekcijo vsiljivih sporočil v strukturno različnih jezikih, kot so hindijščina, telugu in bengalščina, brez kakršnegakoli dodatnega učenja na ciljnih jezikih (angl. \emph{zero-shot learning}).
+Kot najsodobnejše izhodišče na tem področju izstopa članek~\cite{inturi2025}. Avtorji v tem delu naslavljajo problem pomanjkanja 
+označenih podatkov v različnih jezikih z uporabo večjezikovnega modela mBERT. Raziskava dokazuje, da je mogoče model, naučen izključno 
+na angleških podatkih, uspešno uporabiti za detekcijo vsiljivih sporočil v strukturno različnih jezikih, kot so hindijščina, telugu in 
+bengalščina, brez kakršnegakoli dodatnega učenja na ciljnih jezikih (angl. \emph{zero-shot learning}).
 
-Vzporedno s tem so druge študije raziskovale jezikovno nevtralnost mBERT-a~\cite{pires2019} in zmogljivost modelov tipa XLM-R~\cite{conneau2020} pri medjezikovnem prenosu znanja. V članku~\cite{zhao2021closer} so dodatno analizirali strategije prilagajanja modelov (angl. \emph{fine-tuning}) in ugotovili, da uporaba majhnega števila primerov (angl. \emph{few-shot learning}) v ciljnem jeziku znatno stabilizira napovedi modela v primerjavi s povsem ničelnim učenjem. Razvoj se v zadnjem času usmerja tudi v optimizacijo teh modelov, kjer se s tehnikami, kot je destilacija znanja v model TinyBERT~\cite{jiao-etal-2020-tinybert}, poskuša ohraniti visoko zmogljivost ob drastičnem zmanjšanju računske zahtevnosti.
+Vzporedno s tem so druge študije raziskovale jezikovno nevtralnost mBERT-a~\cite{pires2019} in zmogljivost modelov tipa XLM-R~\cite{conneau2020} 
+pri medjezikovnem prenosu znanja. V članku~\cite{zhao2021closer} so dodatno analizirali strategije prilagajanja modelov (angl. \emph{fine-tuning}) 
+in ugotovili, da uporaba majhnega števila primerov (angl. \emph{few-shot learning}) v ciljnem jeziku znatno stabilizira napovedi modela v primerjavi 
+s povsem ničelnim učenjem. Razvoj se v zadnjem času usmerja tudi v optimizacijo teh modelov, kjer se s tehnikami, kot je destilacija znanja v model 
+TinyBERT~\cite{jiao-etal-2020-tinybert}, poskuša ohraniti visoko zmogljivost ob drastičnem zmanjšanju računske zahtevnosti.
 
 
 % \section{Lastna ideja}
@@ -313,8 +341,8 @@ Pri few-shot eksperimentih smo zaradi majhnega števila učnih primerov uporablj
 Za ponovljivost eksperimentov smo fiksirali naključno seme pri delitvi naborov. Poleg tega za vsak zagon shranimo naučeni model in tokenizer ter generiramo graf učenja (izguba in metrike) in konfuzijsko matriko, kar omogoča naknadno preverjanje rezultatov.
 
 \subsection{Metrike in rezultati}
-    Uporabljamo \textbf{natančnost} (accuracy), \textbf{precision}, \textbf{recall} in \textbf{F1} za razred \emph{spam}. 
-    Vrednosti precision/recall/F1 računamo kot binarne metrike, kjer je pozitivni razred \emph{spam} (oznaka 1).
+    Uporabljamo \textbf{točnost}, \textbf{natančnost}, \textbf{priklic} in \textbf{F1} za razred \emph{spam}. 
+    Vrednosti natančnosti/priklica/F1 računamo kot binarne metrike, kjer je pozitivni razred \emph{spam} (oznaka 1).
     Medjezikovni prenos znanja merimo s primerjavo zero-shot in few-shot scenarijev na slovenskem testnem naboru.
 
 \section{Rezultati}
@@ -331,7 +359,7 @@ Kot referenčno točko za oceno zmogljivosti modelov vključimo tudi scenarij EN
 \label{tab:english_in_language}
 \begin{tabular}{lcccc}
 \toprule
-\textbf{Model} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} \\
+\textbf{Model} & \textbf{Točnost} & \textbf{Natančnost} & \textbf{Priklic} & \textbf{F1} \\
 \midrule
 mBERT & 0,9664 & 0,9575 & 0,9520 & 0,9547 \\
 TinyBERT & 0,9778 & 0,9614 & 0,9796 & 0,970 \\
@@ -347,7 +375,7 @@ Tabela~\ref{tab:zero_shot} prikazuje rezultate evaluacije modelov na slovenskem 
 \label{tab:zero_shot}
 \begin{tabular}{lcccc}
 \toprule
-\textbf{Model} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} \\
+\textbf{Model} & \textbf{Točnost} & \textbf{Natančnost} & \textbf{Priklic} & \textbf{F1} \\
 \midrule
 mBERT & 0,9664 & 0,9575 & 0,9520 & 0,9547 \\
 TinyBERT & 0,9211 & 0,9199 & 0,8632 & 0,8906 \\
@@ -369,7 +397,7 @@ Tabela~\ref{tab:mbert_fewshot} prikazuje rezultate fine-tuning-a mBERT modela (1
 \label{tab:mbert_fewshot}
 \begin{tabular}{lcccc}
 \toprule
-\textbf{k} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} \\
+\textbf{k} & \textbf{Točnost} & \textbf{Natančnost} & \textbf{Priklic} & \textbf{F1} \\
 \midrule
 0 (zero-shot) & 0,9664 & 0,9575 & 0,9520 & 0,9547 \\
 10 & 0,9666 & 0,9603 & 0,9495 & 0,9549 \\
@@ -392,7 +420,7 @@ Tabela~\ref{tab:tinybert_fewshot} prikazuje rezultate fine-tuning-a TinyBERT mod
 \label{tab:tinybert_fewshot}
 \begin{tabular}{lcccc}
 \toprule
-\textbf{k} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} \\
+\textbf{k} & \textbf{Točnost} & \textbf{Natančnost} & \textbf{Priklic} & \textbf{F1} \\
 \midrule
 0 (zero-shot) & 0,9211 & 0,9199 & 0,8632 & 0,8906 \\
 10 & 0,8993 & 0,9625 & 0,7589 & 0,8486 \\
@@ -410,7 +438,7 @@ Slika~\ref{fig:bert_tinybert_comparison} prikazuje primerjavo F1 metrike obeh mo
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.95\columnwidth]{../code/graphs/bert_tinybert_k_comparison/bert_tinybert_f1.png}
-\caption{Primerjava F1 metrike med mBERT in TinyBERT modelom glede na število few-shot primerov.}
+\caption{Primerjava metrike F1 med mBERT in TinyBERT modelom glede na število few-shot primerov.}
 \label{fig:bert_tinybert_comparison}
 \end{figure}
 

@@ -1,7 +1,7 @@
 presledki pred procenti - DONE
 decimalne vejice - DONE
 stvari se ponavljajo 
-metrike zamenjajo z slovenščino
+metrike zamenjajo z slovenščino - DONE
 primer kjer, je bil tinybert uporabljen na telefonu
 zakaj se problem razlikuje od navadnega spama
 interpretacija rezultatov (tabele in grafi)
