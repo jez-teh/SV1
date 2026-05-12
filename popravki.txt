@@ -1,5 +1,5 @@
-presledki pred procenti
-decimalne vejice
+presledki pred procenti - DONE
+decimalne vejice - DONE
 stvari se ponavljajo 
 metrike zamenjajo z slovenščino
 primer kjer, je bil tinybert uporabljen na telefonu
