@@ -147,9 +147,25 @@
 }
 
 
-% \begin{abstract}
-%     Povzetek
-% \end{abstract}
+\begin{abstract}
+    Klasifikacija neželenih SMS sporočil je pomembna varnostna naloga v sodobnem digitalnem okolju. Ta 
+    članek predstavlja pristop za detekcijo spama v več jezikih z uporabo večjezičnih transformatorskih 
+    modelov. Raziskava replicira in nadgradi metodologijo iz sodobnih študij z vključitvijo slovenščine 
+    ter optimiziranih modelov za mobilne naprave.
+    
+    Primerjamo dva modela: mBERT (110M parametrov) za splošno uporabo in TinyBERT (15M parametrov) za 
+    mobilne naprave. Modele naučimo na angleških podatkih in jih vrednotimo na slovenskih podatkih, 
+    pri čemer preizkušamo učenje brez primerov (zero-shot) in učenje z malo primeri (few-shot). Rezultati 
+    kažejo, da mBERT dosega F1 vrednosti med 0,9538 in 0,9558 v vseh scenarijih, kar kaže na odličen 
+    medjezikovni prenos znanja. TinyBERT dosega nižje vrednosti (0,8486 do 0,8906), vendar je primeren 
+    za rabo na mobilnih napravah. Pri TinyBERT se few-shot prilagajanje ne izkaže kot enolično: več 
+    slovenskih primerov ne pomeni nujno boljše učinkovitosti, saj se zmogljivost pri večjih $k$ lahko 
+    tudi poslabša.
+    
+    Študija dokazuje, da je mogoče učinkovito klasificirati SMS v slovenščini tudi brez namenskih 
+    učnih podatkov za ta jezik, obenem pa izpostavi kompromis med velikostjo modela in stabilnostjo 
+    prilagajanja v večjezičnem okolju.
+\end{abstract}
 
 
 \keywords{SMS, neželena sporočila, klasifikacija, strojno učenje, večjezikovni modeli}
@@ -235,6 +251,8 @@ pri medjezikovnem prenosu znanja. V članku~\cite{zhao2021closer} so dodatno ana
 in ugotovili, da uporaba majhnega števila primerov (angl. \emph{few-shot learning}) v ciljnem jeziku znatno stabilizira napovedi modela v primerjavi 
 s povsem ničelnim učenjem. Razvoj se v zadnjem času usmerja tudi v optimizacijo teh modelov, kjer se s tehnikami, kot je destilacija znanja v model 
 TinyBERT~\cite{jiao-etal-2020-tinybert}, poskuša ohraniti visoko zmogljivost ob drastičnem zmanjšanju računske zahtevnosti.
+
+Naraščajoča potreba po izvajanju modelov NLP neposredno na mobilnih napravah zahteva uporabo računsko manj zahtevnih arhitektur. V tem okviru se kot učinkovita rešitev uveljavlja model TinyBERT. V delu~\cite{10936701} so demonstrirali njegovo integracijo v naprave Android, kjer služi za sprotno zaznavanje zlonamernih SMS sporočil v realnem času. Da so modeli družine TinyBERT primerni za delovanje v okoljih z omejenimi viri brez zunanje strežniške podpore, potrjuje tudi delo~\cite{11160230}. Avtorji so z uporabo destilacije znanja in kvantizacije model dodatno stisnili v različico TYMBERT, ki zaseda zgolj 27,4 MB pomnilnika, kar podpira praktično uporabnost manjših modelov na mobilnih telefonih.
 
 
 % \section{Lastna ideja}
@@ -472,7 +490,53 @@ Opažanja s primerjave:
     \item obe modela pri večjih vrednostih $k$ (50, 100, 200) v povprečju ohranita višje F1 vrednosti kot pri manjših vrednostih ($k=10$).
 \end{itemize}
 
-% Sekcija "Analiza napak" je odstranjena (vsebine analiz bodo v ločeni sekciji).
+\section{Diskusija}
+
+Rezultati naših eksperimentov kažejo na več ključnih spoznanj o medjezikovnem prenosu znanja pri klasifikaciji SMS sporočil.
+
+\subsection{Medjezikovni prenos znanja}
+
+Primerjava zero-shot scenarijev (EN $\rightarrow$ SL) razkriva, da je mBERT model ohranil večino svoje zmogljivosti tudi pri testiranju na slovenščini. Čeprav je model naučen izključno na angleških podatkih, je dosegel F1 vrednost 0,9547 na slovenskem testnem naboru, kar je enako rezultatu na angleškem naboru (EN $\rightarrow$ EN). To kaže na izjemno sposobnost večjezikovnih modelov za semantičen prenos znanja med jeziki.
+
+Nasprotno pa je TinyBERT pokazal znaten padec zmogljivosti pri medjezikovnem prenosu. Razlika v F1 vrednostih med mBERT in TinyBERT v zero-shot scenariju znaša 0,0641. Ta razlika je verjetno posledica manjše kapacitete modela in zmanjšane jezikovne reprezentacije, ki izhaja iz procesa destilacije znanja. Kljub temu je tudi TinyBERT ohranil sprejemljivo zmogljivost (F1 = 0,8906), kar je primerno za praktične aplikacije na mobilnih napravah.
+
+\subsection{Vpliv few-shot prilagajanja}
+
+Rezultati few-shot učenja kažejo zanimive vzorce. Pri mBERT modelu je dodatno fino prilagajanje s 10 do 200 primeri nekoliko izboljšalo ali ohranilo F1 vrednost. Razlike so majhne (v razponu 0,0011 do 0,0020), kar nakazuje, da je model že brez prilagajanja dosegel visoko generalizacijo.
+
+Pri TinyBERT modelu pa vidimo bolj dinamičen odziv na few-shot učenje. Pri k=100 je model dosegel najboljšo F1 vrednost (0,8888), kar je izboljšanje za 0,0018 glede na zero-shot scenarij. To nakazuje, da manjši modeli bolj koristijo dodatne podatke v ciljnem jeziku. Zanimivo je, da k=10 ni privedel do izboljšanja pri TinyBERT, temveč je F1 padla na 0,8486, kar morda kaže na premajhno količino podatkov za stabilno prilagajanje.
+
+\subsection{Praktične implikacije}
+
+Naši rezultati imajo jasne posledice za praktično uporabo:
+
+\textbf{Za splošno uporabo:} mBERT je idealen izbor, saj dosega izjemno visoko zmogljivost brez potrebe po dodatnem učenju na ciljnem jeziku. Njegov zero-shot pristop je praktičen za hitro razporeditev v novih jezikih.
+
+\textbf{Za mobilne naprave:} TinyBERT je primeren izbor za lokalno obdelavo na napravah z omejenimi viri. Čeprav je zmogljivost nižja, se lahko z le 50-100 primeri slovenskih sporočil zmanjša razlika od mBERT-a. To je ključno za sisteme, ki potrebujejo visoko stopnjo zasebnosti in delovanje brez internetne povezave.
+
+\textbf{Za jezikovne pare:} Angleščina-slovenščina se je izkazala za dovolj semantično povezana, da omogoči učinkovit medjezikovni prenos znanja. To nakazuje, da so drugi indoevropski jeziki, kot so španski, nemščina ali francosčina, verjetno enako ali še bolj primerni za take pristope.
+
+\subsection{Omejitve raziskave}
+
+Čeprav so rezultati obetavni, je treba opozoriti na nekaj omejitev:
+
+\begin{itemize}
+    \item \textbf{Velikost nabora:} Študija se osredotoča na slovenski testni nabor fiksne velikosti. Dodatne analize z različnimi velikostmi testnih naborov bi dale podrobnejši vpogled v generalizacijo.
+    \item \textbf{Domenske razlike:} Izkušeni SMS sporočila v angleščini in slovenščini lahko vsebujejo različne vzorce spama, kar bi lahko vplivalo na rezultate.
+    \item \textbf{Primerjava z drugimi pristopi:} Študija se osredotoča na transformatorske modele. Primerjava s klasičnimi metodami (SVM, logistična regresija) bi bila vredna za popolnejšo evalvacijo.
+\end{itemize}
+
+\section{Zaključek}
+
+V članku smo obravnavali problem večjezične klasifikacije neželenih SMS sporočil s poudarkom na praktični uporabnosti v okoljih z omejenimi viri. Z uporabo strategij učenja brez primerov (zero-shot) in učenja z malo primeri (few-shot) smo primerjali večji model mBERT in bistveno manjši, mobilno usmerjen model TinyBERT na jezikovnem paru angleščina--slovenščina.
+
+Rezultati potrjujejo, da mBERT izkazuje zelo stabilen medjezikovni prenos znanja: F1 na slovenskem testnem naboru v zero-shot scenariju ostane primerljiv z rezultatom v scenariju EN $\rightarrow$ EN, few-shot prilagajanje pa prinese le minimalne spremembe. To kaže, da lahko za visoko natančno detekcijo spama v slovenščini v praksi pogosto zadostuje že model, naučen na angleških podatkih.
+
+Pri TinyBERT smo opazili drugačen vzorec. V zero-shot scenariju je zmogljivost nižja kot pri mBERT, few-shot prilagajanje pa se je izkazalo kot občutljivo na izbiro velikosti nabora $k$. V naših eksperimentih povečanje števila slovenskih primerov ni vodilo v enolično izboljševanje, temveč se je pri večjem številu primerov začela zmogljivost tudi slabšati (npr. pri $k=200$ je F1 nižji kot pri $k=0$ in $k=100$). To nakazuje, da pri manjših modelih zgolj dodajanje več primerov brez dodatne prilagoditve učnih nastavitev (npr. število epoh, regularizacija, zgodnje ustavljanje) lahko privede do nestabilnega prilagajanja in slabše generalizacije.
+
+Sklepno ugotavljamo, da je mBERT primernejša izbira, kadar je prioritetna najvišja klasifikacijska zmogljivost in je na voljo dovolj računske moči, medtem ko TinyBERT ostaja smiseln kandidat za mobilne naprave, kjer je ključna majhnost modela, a zahteva bolj previdno prilagoditev in validacijo na ciljnem jeziku. V prihodnje bi bilo smiselno preveriti vpliv različnih učnih hiperparametrov za TinyBERT v few-shot režimu, vključiti dodatne klasične baseline pristope (npr. SVM) ter razširiti evalvacijo na več slovenskih podatkovnih virov in domenskih variacij.
+
+
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{bibliografija}
 
