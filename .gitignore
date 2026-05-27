@@ -25,3 +25,5 @@ trained_models/
 
 venv/
 backup.tex
+prezentacija_SMS_spam_script.md
+generate_ppt.py
