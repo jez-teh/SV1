@@ -1,7 +1,47 @@
+SV1:
+Preučiti določeno tematiko jezikovnih tehnologij na osnovi znanstvenih člankov. Glede na pridobljeno znanje se reproducirajo rezultati in preizkusi lastna ideja. Končni cilj je izdelava seminarske naloge, kjer se opišejo obstoječe tehnologije, lastna ideja in rezultati eksperimentov. Na koncu semestra vsaka skupina pripravi predstavitev svojega dela.
+
+Naloge v okviru S1:
+
+    Ustvarite skupine 5 študentov.
+    Izbira znanstvenih člankov.
+    Uporabite vzorec za pisanje seminarske naloge in napišite kratko vsebino, ki bo vključevala seznam avtorjev (študentov), kratek opis tematike, sorodnih del in opis lastne ideje.
+    Ustrezno citirajte članke.
+    Bodite pozorni na kvaliteto napisanega besedila.
+
+
+Nalogo SV1 dopolnite tako, da pripravite načrt eksperimentov za izbrano tematiko. Eksperiment naj bo tako načrtovan, da omogoča primerjavo rezultatov pridobljenih iz literature in rezultatov metod študentov. V okvir eksperimenta vključite še lastno idejo.
+
+SV2:
+Naloge v okviru SV2:
+
+    Pridobivanje podatkov za izvajanje eksperimenta.
+    Priprava okolja za izvajanje eksperimenta.
+    Izvedba eksperimenta.
+    V prispevku dodajte opis načrta eksperimenta.
+    Oddajte poročilo v formatu pdf.
+
+Ocenjevanje:
+
+    Pridobivanje podatkov za eksperiment (1 točka).
+    Načrtovanje eksperimenta (3 točke).
+    Izvajanje eksperimenta (3 točke).
+    Opis eksperimenta (3 točke).
+
+Popravki po sv2
 presledki pred procenti - DONE
 decimalne vejice - DONE
 stvari se ponavljajo 
 metrike zamenjajo z slovenščino - DONE
-primer kjer, je bil tinybert uporabljen na telefonu
+primer akreditiranega članka kjer, je bil tinybert uporabljen na telefonu
 zakaj se problem razlikuje od navadnega spama
 interpretacija rezultatov (tabele in grafi)
+
+SV3:
+SV2 dopolnite na naslednji način:
+
+    Dokončajte prispevek
+    Glede na dobljene rezultate in opravljeno delo posodobite opis povzetka in uvoda ter napišite zaključek.
+    Pripravite 10 minutno predstavitev.
+
+Oddajte prispevek v formatu pdf in latex. Oddajte tudi predstavitev.

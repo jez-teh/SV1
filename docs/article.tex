@@ -187,18 +187,18 @@
     sporočil, ki temeljijo na različnih algoritmih strojnega učenja, kjer bomo primerjali
     njihovo natančnost. 
 
-    Problem detekcije neželenih SMS sporočil se pomembno razlikuje od klasifikacije elektronske pošte in 
-    drugih oblik spletne komunikacije zaradi specifičnih lastnosti samega medija. SMS sporočila so bistveno 
-    krajša, pogosto vsebujejo neformalni jezik, kratice, fonetične zapise, emojije ter namerne pravopisne napake, 
-    ki jih pošiljatelji uporabljajo za obhod filtrov~\cite{lota2017systematic}. Zaradi omejene dolžine 
-    besedila imajo modeli na voljo manj semantičnega konteksta kot pri elektronski pošti, kjer so prisotni daljši stavki, 
-    zadeve sporočil, HTML struktura in metapodatki~\cite{Jain2018SpamDO}. Poleg tega SMS komunikacija pogosto vključuje 
-    mobilno-specifične značilnosti, kot so telefonske številke, časovni vzorci pošiljanja in omrežni podatki, ki 
-    jih pri elektronski pošti ni ali pa imajo drugačno strukturo~\cite{6133257}. Raziskave kažejo tudi, da se spam v 
-    SMS okolju hitreje prilagaja filtrom z uporabo kratkih dinamičnih sporočil in socialnega inženiringa, zaradi 
-    česar je generalizacija modelov težja kot pri tradicionalni e-pošti~\cite{Jain2018SpamDO}. Zaradi teh 
-    razlogov metode, razvite za detekcijo neželene elektronske pošte, pogosto niso neposredno prenosljive na SMS 
-    domeno brez dodatnih prilagoditev modelov in predobdelave besedila.
+    Problem detekcije neželenih SMS sporočil se pomembno razlikuje od klasifikacije elektronske 
+    pošte in drugih oblik spletne komunikacije zaradi specifičnih lastnosti samega medija. SMS 
+    sporočila so bistveno krajša, pogosto vsebujejo neformalni jezik, kratice, fonetične zapise, 
+    emojije ter namerne pravopisne napake, ki jih pošiljatelji uporabljajo za obhod filtrov~\cite{almeida2013sms}. 
+    Zaradi omejene dolžine besedila imajo modeli na voljo manj semantičnega konteksta kot pri elektronski pošti, 
+    kjer so prisotni daljši stavki, zadeve sporočil, HTML struktura in metapodatki~\cite{cormack2007shortmessages}. 
+    Poleg tega SMS komunikacija pogosto vključuje mobilno-specifične značilnosti, kot so telefonske številke, 
+    časovni vzorci pošiljanja in omrežni podatki, ki jih pri elektronski pošti ni ali pa imajo drugačno strukturo~\cite{Xu2012Noncontent}. 
+    Raziskave kažejo tudi, da se spam v SMS okolju hitro prilagaja filtrom z uporabo kratkih dinamičnih sporočil in socialnega inženiringa, 
+    zaradi česar je generalizacija modelov težja kot pri tradicionalni e-pošti. Zaradi teh razlogov metode, 
+    razvite za detekcijo neželene elektronske pošte, pogosto niso neposredno prenosljive na SMS domeno brez dodatnih prilagoditev modelov 
+    in predobdelave besedila~\cite{cormack2007feature}.
 
     % V nadaljevanju članka bomo najprej predstavili sorodna dela na področju klasifikacije 
     % SMS sporočil, nato pa bomo opisali našo lastno idejo in pristop k reševanju problema 
