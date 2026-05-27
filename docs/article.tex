@@ -327,7 +327,6 @@ Delitev je bila izvedena z determinističnim naključnim semenom (seed = 42), da
 Validacijsko množico uporabljamo izključno za spremljanje učenja in izbiro najboljše različice modela, medtem ko končne metrike poročamo na testni množici.
 
 \subsection{Izvedba eksperimenta}
-
     Eksperiment izvedemo v jeziku Python s knjižnicami HuggingFace za delo z transformatorskimi modeli.
     Vse modele smo naučili na angleškem naboru ter jih preizkusili na slovenskem naboru kot zunanjem testu za oceno medjezikovnega prenosa.
     V eksperimentih smo primerjali sva večjezikovna transformatorska modela: mBERT (110M parametrov)~\cite{devlin2019}
@@ -339,7 +338,7 @@ Validacijsko množico uporabljamo izključno za spremljanje učenja in izbiro na
     \item \textbf{Učenje na angleškem naboru}: Za vsak model (mBERT, TinyBERT) smo izvedli fino prilagajanje na angleških podatkih.
     \item \textbf{Učenje brez primerov (zero-shot)}: Modele, naučene izključno na angleščini, smo neposredno ovrednotili na slovenskem testnem naboru. S tem smo preverili osnovno sposobnost medjezikovnega prenosa znanja brez dodatnih lokalnih podatkov~\cite{pires2019}.
     \item \textbf{Učenje z nekaj primeri (few-shot)}: Modele smo dodatno fino prilagodili z majhnim naborom slovenskih primerov $k \in \{10, 50, 100, 200\}$~\cite{zhao2021closer}. Pri tem smo posebej spremljali, kako hitro se na majhnem številu podatkov odzove mobilni model TinyBERT v primerjavi z večjimi modeli.
-    \item \textbf{Vizualizacija in analiza}: Za vse kombinacije modelov in pristopov smo izračunali metrike (F1, natančnost, priklic) ter generirali konfuzijske matrike in grafe za primerjavo zmogljivosti glede na velikost modela.
+    \item \textbf{Vizualizacija in analiza}: Za vse kombinacije modelov in pristopov smo na testni množici izračunali metrike (točnost, natančnost, priklic in F1), pri čemer smo pozitivni razred definirali kot \emph{spam}. Poleg agregiranih metrik smo generirali tudi konfuzijske matrike, da smo lahko ločeno analizirali \textit{FP} (ham $\rightarrow$ spam) in \textit{FN} (spam $\rightarrow$ ham) ter tako razložili spremembe v natančnosti/priklicu. Za lažjo primerjavo med modeli smo pripravili še grafe metrik v odvisnosti od $k$, kar omogoča vizualno interpretacijo ne-monotonega obnašanja pri few-shot prilagajanju.
 \end{enumerate}
 
 \subsubsection{Eksperimentalni scenariji}
@@ -456,8 +455,29 @@ Slika~\ref{fig:bert_tinybert_comparison} prikazuje primerjavo F1 metrike obeh mo
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.95\columnwidth]{../code/graphs/bert_tinybert_k_comparison/bert_tinybert_f1.png}
-\caption{Primerjava metrike F1 med mBERT in TinyBERT modelom glede na število few-shot primerov.}
+\caption{Primerjava metrike F1 med mBERT in TinyBERT modelom glede na število few-shot primerov. mBERT je praktično nespremenjen pri vseh $k$, medtem ko je TinyBERT ne-monoton: pri $k=10$ in $k=200$ opazimo padec, najvišji rezultat pa doseže pri $k=0$ (zero-shot), zelo blizu pa je tudi pri $k=100$.}
 \label{fig:bert_tinybert_comparison}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.95\columnwidth]{../code/graphs/bert_tinybert_k_comparison/bert_tinybert_accuracy.png}
+\caption{Primerjava točnosti (accuracy) med mBERT in TinyBERT glede na število few-shot primerov. Ker je razred \textit{ham} pogostejši, ostane točnost visoka tudi pri scenarijih, kjer se priklic spama poslabša; zato je pri interpretaciji pomembno spremljati tudi priklic in F1.}
+\label{fig:bert_tinybert_accuracy}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.95\columnwidth]{../code/graphs/bert_tinybert_k_comparison/bert_tinybert_precision.png}
+\caption{Primerjava natančnosti (precision) med mBERT in TinyBERT glede na število few-shot primerov. Pri TinyBERT se natančnost pri nekaterih $k$ poveča (manj lažno pozitivnih), vendar to ne pomeni nujno boljšega F1, če se hkrati zmanjša priklic.}
+\label{fig:bert_tinybert_precision}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.95\columnwidth]{../code/graphs/bert_tinybert_k_comparison/bert_tinybert_recall.png}
+\caption{Primerjava priklica (recall) med mBERT in TinyBERT glede na število few-shot primerov. Padec F1 pri TinyBERT pri $k=10$ in $k=200$ sovpada z opaznim padcem priklica (več zgrešenih \textit{spam} primerov), kar potrjuje, da je glavni problem pri teh $k$ povečanje lažno negativnih napovedi.}
+\label{fig:bert_tinybert_recall}
 \end{figure}
 
 \subsubsection{Rezultati po vrednosti $k$}
@@ -487,8 +507,47 @@ Opažanja s primerjave:
     \item TinyBERT dosega nižje F1 vrednosti, v razponu med 0,8486 in 0,8906.
     \item Razlika v F1 med modeloma se giblje med 0,0641 (pri $k=0$) in 0,1063 (pri $k=10$).
     \item Pri $k=100$ je razlika najmanjša (0,0670), pri $k=10$ je največja (0,1063).
-    \item obe modela pri večjih vrednostih $k$ (50, 100, 200) v povprečju ohranita višje F1 vrednosti kot pri manjših vrednostih ($k=10$).
+    \item Oba modela pri vrednostih $k=50$ in $k=100$ dosegata višji F1 kot pri $k=10$.
 \end{itemize}
+
+\subsubsection{Konfuzijske matrike}
+
+Za boljšo razlago razlik med natančnostjo in priklicem prikazujemo konfuzijske matrike. V nadaljevanju interpretiramo predvsem \textit{FP} (ham $\rightarrow$ spam) in \textit{FN} (spam $\rightarrow$ ham), saj neposredno pojasnjujeta spremembe v natančnosti in priklicu.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.90\columnwidth]{../code/graphs/bert-base-multilingual-cased_zero_shot_eval_2026-05-10_15-27-23/confusion_matrix.png}
+\caption{Konfuzijska matrika mBERT v zero-shot scenariju (EN $\rightarrow$ SL). Model naredi malo napak: $FP=87$ (ham označen kot spam) in $FN=99$ (spam označen kot ham), pri čemer sta tudi $TN=3393$ in $TP=1962$ visoka. To pomeni, da mBERT hkrati dobro zazna spam (nizek \textit{FN}) in ne ustvarja veliko lažnih alarmov (nizek \textit{FP}), zato sta natančnost in priklic visoka ter uravnotežena.}
+\label{fig:cm_mbert_zero_shot}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.90\columnwidth]{../code/graphs/TinyBERT_General_4L_312D_zero_shot_eval_2026-05-10_14-46-05/confusion_matrix.png}
+\caption{Konfuzijska matrika TinyBERT v zero-shot scenariju. V primerjavi z mBERT ima več napak: $FP=155$ in predvsem več lažno negativnih $FN=282$ (spam označen kot ham), kar pomeni, da model del spama \emph{spregleda}. To se neposredno vidi v nižjem priklicu (več zgrešenih spamov) in posledično nižjem F1, četudi je natančnost še vedno razmeroma visoka.}
+\label{fig:cm_tinybert_zero_shot}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.90\columnwidth]{../code/graphs/TinyBERT_General_4L_312D_fewshot_k10_2026-05-10_14-47-27/confusion_matrix.png}
+\caption{Konfuzijska matrika TinyBERT pri few-shot $k=10$. Model postane \emph{konzervativen} pri označevanju spama: $FP=61$ je nizko (malo ham sporočil je napačno označenih kot spam), vendar močno naraste $FN=497$ (veliko spama je napačno označenega kot ham). Posledično priklic spama izrazito pade, kar pojasni tudi padec F1 pri $k=10$, kljub zelo visoki natančnosti.}
+\label{fig:cm_tinybert_k10}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.90\columnwidth]{../code/graphs/TinyBERT_General_4L_312D_fewshot_k100_2026-05-10_14-50-22/confusion_matrix.png}
+\caption{Konfuzijska matrika TinyBERT pri few-shot $k=100$. V primerjavi s $k=10$ se ravnotežje izboljša: $FN$ pade na $299$, kar pomeni manj spregledanega spama in višji priklic, hkrati pa ostane $FP=142$ zmeren. Ta konfiguracija zato delno povrne izgubljeno učinkovitost glede na $k=10$ in se najbolj približa zero-shot rezultatu TinyBERT.}
+\label{fig:cm_tinybert_k100}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.90\columnwidth]{../code/graphs/TinyBERT_General_4L_312D_fewshot_k200_2026-05-10_14-52-05/confusion_matrix.png}
+\caption{Konfuzijska matrika TinyBERT pri few-shot $k=200$. Opazimo poslabšanje glede na $k=100$: $FN=452$ ponovno naraste (več spregledanega spama), $FP=95$ pa ostane relativno nizek. To kaže, da več slovenskih primerov v few-shot režimu ne prinese nujno stabilnejšega modela, temveč lahko potisne odločanje v smer, kjer model sicer ne dela veliko lažnih alarmov, a hkrati prepogosto spregleda spam, kar zniža F1.}
+\label{fig:cm_tinybert_k200}
+\end{figure}
 
 \section{Diskusija}
 
@@ -504,7 +563,9 @@ Nasprotno pa je TinyBERT pokazal znaten padec zmogljivosti pri medjezikovnem pre
 
 Rezultati few-shot učenja kažejo zanimive vzorce. Pri mBERT modelu je dodatno fino prilagajanje s 10 do 200 primeri nekoliko izboljšalo ali ohranilo F1 vrednost. Razlike so majhne (v razponu 0,0011 do 0,0020), kar nakazuje, da je model že brez prilagajanja dosegel visoko generalizacijo.
 
-Pri TinyBERT modelu pa vidimo bolj dinamičen odziv na few-shot učenje. Pri k=100 je model dosegel najboljšo F1 vrednost (0,8888), kar je izboljšanje za 0,0018 glede na zero-shot scenarij. To nakazuje, da manjši modeli bolj koristijo dodatne podatke v ciljnem jeziku. Zanimivo je, da k=10 ni privedel do izboljšanja pri TinyBERT, temveč je F1 padla na 0,8486, kar morda kaže na premajhno količino podatkov za stabilno prilagajanje.
+Pri TinyBERT modelu pa vidimo bolj dinamičen odziv na few-shot učenje, pri katerem povečanje $k$ ne vodi v enolično izboljšanje (Slika~\ref{fig:bert_tinybert_comparison}). V našem primeru je izhodiščni zero-shot rezultat za TinyBERT visok (F1 = 0,8906), pri $k=10$ pa se učinkovitost občutno poslabša (F1 = 0,8486), nato se pri $k=50$ in $k=100$ delno povrne (F1 = 0,8664 in 0,8888), pri $k=200$ pa ponovno pade (F1 = 0,8547) (Tabela~\ref{tab:tinybert_fewshot}).
+
+Grafi natančnosti in priklica (Sliki~\ref{fig:bert_tinybert_precision} in~\ref{fig:bert_tinybert_recall}) pokažejo, da je ta nihaj povezan s kompromisom med \emph{precision} in \emph{recall}. Pri $k=10$ TinyBERT doseže zelo visoko natančnost (0,9625), vendar hkrati močno pade priklic (0,7589), kar pomeni večje število lažno negativnih primerov spama; posledično pade tudi F1. Podobno pri $k=200$ natančnost ostane visoka (0,9442), priklic pa je nižji (0,7807), zato se F1 ne izboljša glede na izhodišče. Takšno obnašanje je skladno s scenarijem, kjer majhen in/ali domensko nehomogen nabor few-shot primerov povzroči nestabilno prilagajanje (prevelik vpliv posameznih primerov) in slabšo generalizacijo.
 
 \subsection{Praktične implikacije}
 
@@ -512,7 +573,7 @@ Naši rezultati imajo jasne posledice za praktično uporabo:
 
 \textbf{Za splošno uporabo:} mBERT je idealen izbor, saj dosega izjemno visoko zmogljivost brez potrebe po dodatnem učenju na ciljnem jeziku. Njegov zero-shot pristop je praktičen za hitro razporeditev v novih jezikih.
 
-\textbf{Za mobilne naprave:} TinyBERT je primeren izbor za lokalno obdelavo na napravah z omejenimi viri. Čeprav je zmogljivost nižja, se lahko z le 50-100 primeri slovenskih sporočil zmanjša razlika od mBERT-a. To je ključno za sisteme, ki potrebujejo visoko stopnjo zasebnosti in delovanje brez internetne povezave.
+\textbf{Za mobilne naprave:} TinyBERT je primeren izbor za lokalno obdelavo na napravah z omejenimi viri. Čeprav je zmogljivost nižja, few-shot prilagajanje na 50--100 slovenskih primerih lahko delno povrne padec glede na $k=10$, vendar učinek ni stabilen in ne zagotavlja enoličnega približevanja mBERT-u (Slika~\ref{fig:bert_tinybert_comparison}). To je ključno za sisteme, ki potrebujejo visoko stopnjo zasebnosti in delovanje brez internetne povezave.
 
 \textbf{Za jezikovne pare:} Angleščina-slovenščina se je izkazala za dovolj semantično povezana, da omogoči učinkovit medjezikovni prenos znanja. To nakazuje, da so drugi indoevropski jeziki, kot so španski, nemščina ali francosčina, verjetno enako ali še bolj primerni za take pristope.
 
