@@ -190,7 +190,7 @@
     Problem detekcije neželenih SMS sporočil se pomembno razlikuje od klasifikacije elektronske 
     pošte in drugih oblik spletne komunikacije zaradi specifičnih lastnosti samega medija. SMS 
     sporočila so bistveno krajša, pogosto vsebujejo neformalni jezik, kratice, fonetične zapise, 
-    emojije ter namerne pravopisne napake, ki jih pošiljatelji uporabljajo za obhod filtrov. 
+    emotikone ter namerne pravopisne napake, ki jih pošiljatelji uporabljajo za obhod filtrov. 
     Zaradi omejene dolžine besedila imajo modeli na voljo manj semantičnega konteksta kot pri elektronski pošti, 
     kjer so prisotni daljši stavki, zadeve sporočil, HTML struktura in metapodatki. 
     Poleg tega SMS komunikacija pogosto vključuje mobilno-specifične značilnosti, kot so telefonske številke, 
@@ -337,21 +337,21 @@ Validacijsko množico uporabljamo izključno za spremljanje učenja in izbiro na
     \item \textbf{Učenje na angleškem naboru}: Za vsak model (mBERT, TinyBERT) smo izvedli fino prilagajanje na angleških podatkih.
     \item \textbf{Učenje brez primerov (zero-shot)}: Modele, naučene izključno na angleščini, smo neposredno ovrednotili na slovenskem testnem naboru. S tem smo preverili osnovno sposobnost medjezikovnega prenosa znanja brez dodatnih lokalnih podatkov~\cite{pires2019}.
     \item \textbf{Učenje z nekaj primeri (few-shot)}: Modele smo dodatno fino prilagodili z majhnim naborom slovenskih primerov $k \in \{10, 50, 100, 200\}$~\cite{zhao2021closer}. Pri tem smo posebej spremljali, kako hitro se na majhnem številu podatkov odzove mobilni model TinyBERT v primerjavi z večjimi modeli.
-    \item \textbf{Vizualizacija in analiza}: Za vse kombinacije modelov in pristopov smo na testni množici izračunali metrike (točnost, natančnost, priklic in F1), pri čemer smo pozitivni razred definirali kot \emph{spam}. Poleg agregiranih metrik smo generirali tudi matrike zmede, da smo lahko ločeno analizirali \textit{FP} (ham $\rightarrow$ spam) in \textit{FN} (spam $\rightarrow$ ham) ter tako razložili spremembe v natančnosti/priklicu. Za lažjo primerjavo med modeli smo pripravili še grafe metrik v odvisnosti od $k$, kar omogoča vizualno interpretacijo ne-monotonega obnašanja pri few-shot prilagajanju.
+    \item \textbf{Vizualizacija in analiza}: Za vse kombinacije modelov in pristopov smo na testni množici izračunali metrike (točnost, natančnost, priklic in F1), pri čemer smo pozitivni razred definirali kot \emph{spam}. Poleg agregiranih metrik smo generirali tudi matrike zmede, da smo lahko ločeno analizirali \textit{FP} (Lažni pozitivi, ham $\rightarrow$ spam) in \textit{FN} (Lažni negativi, spam $\rightarrow$ ham), saj neposredno pojasnjujeta spremembe v natančnosti in priklicu. Za lažjo primerjavo med modeli smo pripravili še grafe metrik v odvisnosti od $k$, kar omogoča vizualno interpretacijo ne-monotonega obnašanja pri few-shot prilagajanju.
 \end{enumerate}
 
 \subsubsection{Eksperimentalni scenariji}
 Za oceno medjezikovnega prenosa znanja obravnavamo tri scenarije:
 \begin{itemize}
-    \item \textbf{In-language (EN $\rightarrow$ EN):} učenje in testiranje na angleškem naboru, kar predstavlja referenčno točko za zgornjo mejo zmogljivosti.
-    \item \textbf{Zero-shot (EN $\rightarrow$ SL):} model naučimo na angleških podatkih in ga brez dodatnega učenja ovrednotimo na slovenskem testu.
-    \item \textbf{Few-shot (EN $\rightarrow$ SL + $k$):} model, naučen na angleščini, dodatno fino prilagodimo na $k$ slovenskih primerih in nato ovrednotimo na celotnem slovenskem testu.
+    \item \textbf{Znotraj jezika (ang. In-language, EN $\rightarrow$ EN):} učenje in testiranje na angleškem naboru, kar predstavlja referenčno točko za zgornjo mejo zmogljivosti.
+    \item \textbf{Brez primerov (ang. Zero-shot, EN $\rightarrow$ SL):} model naučimo na angleških podatkih in ga brez dodatnega učenja ovrednotimo na slovenskem testu.
+    \item \textbf{Z nekaj primeri (ang. Few-shot, EN $\rightarrow$ SL + $k$):} model, naučen na angleščini, dodatno fino prilagodimo na $k$ slovenskih primerih in nato ovrednotimo na celotnem slovenskem testu.
 \end{itemize}
 
 \subsubsection{Nastavitve učenja (hiperparametri)}
 Modele smo učili z ogrodjem HuggingFace \texttt{Trainer}. Pri vseh eksperimentih smo uporabljali največjo dolžino zaporedja \texttt{max\_length = 128}.
 Privzete nastavitve učenja so bile: stopnja učenja $2\cdot 10^{-5}$, $3$ epohe in velikost paketa 4 na napravo.
-Pri few-shot eksperimentih smo zaradi majhnega števila učnih primerov uporabljali večjo velikost paketa (8) in spremljali metriko \textbf{F1} za razred \emph{spam} kot kriterij za izbiro najboljše različice modela (\emph{best model}).
+Pri eksperimentih z malo primeri smo zaradi majhnega števila učnih primerov uporabljali večjo velikost paketa (8) in spremljali metriko \textbf{F1} za razred \emph{spam} kot kriterij za izbiro najboljše različice modela.
 
 \subsubsection{Ponovljivost}
 Za ponovljivost eksperimentov smo fiksirali naključno seme pri delitvi naborov. Poleg tega za vsak zagon shranimo naučeni model in razčlenjevalnik na žetone ter generiramo graf učenja (izguba in metrike) in matrika zmede, kar omogoča naknadno preverjanje rezultatov.
@@ -399,17 +399,17 @@ TinyBERT & 0,9211 & 0,9199 & 0,8632 & 0,8906 \\
 \end{tabular}
 \end{table}
 
-\subsection{Rezultati učenja z nekaj primeri (Few-shot adaptation)}
+\subsection{Rezultati učenja z malo primeri}
 
 Eksperimente učenja z nekaj primeri smo izvedli z namenom, da preverimo, kako hitro se modeli prilagodijo slovenskim podatkom ob majhnem številu primerov. Modele smo dodatno fino prilagodili z nabori različnih velikosti: $k \in \{10, 50, 100, 200\}$ slovenskih primerov.
 
-\paragraph{Few-shot rezultati mBERT modela}
+\paragraph{Rezultati z malo primeri za model mBERT}
 
-Tabela~\ref{tab:mbert_fewshot} prikazuje rezultate fine-tuning-a mBERT modela na različnih velikostih few-shot naborov.
+Tabela~\ref{tab:mbert_fewshot} prikazuje rezultate finega prilagajanja modela mBERT za nabore različnih velikosti.
 
 \begin{table}[h]
 \centering
-\caption{Few-shot rezultati mBERT modela na slovenskem testnem naboru ($k$ = število učnih primerov).}
+\caption{Rezultati z malo primeri za model mBERT na slovenskem testnem naboru ($k$ = število učnih primerov).}
 \label{tab:mbert_fewshot}
 \begin{tabular}{lcccc}
 \toprule
@@ -426,13 +426,13 @@ Tabela~\ref{tab:mbert_fewshot} prikazuje rezultate fine-tuning-a mBERT modela na
 
 \newpage
 
-\paragraph{Few-shot rezultati TinyBERT modela}
+\paragraph{Rezultati z malo primeri za model TinyBERT}
 
-Tabela~\ref{tab:tinybert_fewshot} prikazuje rezultate fine-tuning-a TinyBERT modela na različnih velikostih few-shot naborov. TinyBERT je znatno manjši model, namenjen mobilnim aplikacijam.
+Tabela~\ref{tab:tinybert_fewshot} prikazuje rezultate finega prilagajanja modela TinyBERT za nabore različnih velikosti. TinyBERT je znatno manjši model, namenjen mobilnim aplikacijam.
 
 \begin{table}[h]
 \centering
-\caption{Few-shot rezultati TinyBERT modela na slovenskem testnem naboru ($k$ = število učnih primerov).}
+\caption{Rezultati z malo primeri za model TinyBERT na slovenskem testnem naboru ($k$ = število učnih primerov).}
 \label{tab:tinybert_fewshot}
 \begin{tabular}{lcccc}
 \toprule
@@ -461,21 +461,21 @@ Slika~\ref{fig:bert_tinybert_comparison} prikazuje primerjavo F1 metrike obeh mo
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.95\columnwidth]{../code/graphs/bert_tinybert_k_comparison/bert_tinybert_accuracy.png}
-\caption{Primerjava točnosti (accuracy) med mBERT in TinyBERT glede na število few-shot primerov. Ker je razred \textit{ham} pogostejši, ostane točnost visoka tudi pri scenarijih, kjer se priklic spama poslabša; zato je pri interpretaciji pomembno spremljati tudi priklic in F1.}
+\caption{Primerjava točnosti med mBERT in TinyBERT glede na število few-shot primerov. Ker je razred \textit{ham} pogostejši, ostane točnost visoka tudi pri scenarijih, kjer se priklic spama poslabša; zato je pri interpretaciji pomembno spremljati tudi priklic in F1.}
 \label{fig:bert_tinybert_accuracy}
 \end{figure}
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.95\columnwidth]{../code/graphs/bert_tinybert_k_comparison/bert_tinybert_precision.png}
-\caption{Primerjava natančnosti (precision) med mBERT in TinyBERT glede na število few-shot primerov. Pri TinyBERT se natančnost pri nekaterih $k$ poveča (manj lažno pozitivnih), vendar to ne pomeni nujno boljšega F1, če se hkrati zmanjša priklic.}
+\caption{Primerjava natančnosti med mBERT in TinyBERT glede na število few-shot primerov. Pri TinyBERT se natančnost pri nekaterih $k$ poveča (manj lažno pozitivnih), vendar to ne pomeni nujno boljšega F1, če se hkrati zmanjša priklic.}
 \label{fig:bert_tinybert_precision}
 \end{figure}
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.95\columnwidth]{../code/graphs/bert_tinybert_k_comparison/bert_tinybert_recall.png}
-\caption{Primerjava priklica (recall) med mBERT in TinyBERT glede na število few-shot primerov. Padec F1 pri TinyBERT pri $k=10$ in $k=200$ sovpada z opaznim padcem priklica (več zgrešenih \textit{spam} primerov), kar potrjuje, da je glavni problem pri teh $k$ povečanje lažno negativnih napovedi.}
+\caption{Primerjava priklica med mBERT in TinyBERT glede na število few-shot primerov. Padec F1 pri TinyBERT pri $k=10$ in $k=200$ sovpada z opaznim padcem priklica (več zgrešenih \textit{spam} primerov), kar potrjuje, da je glavni problem pri teh $k$ povečanje lažno negativnih napovedi.}
 \label{fig:bert_tinybert_recall}
 \end{figure}
 
@@ -511,7 +511,7 @@ Opažanja s primerjave:
 
 \subsubsection{Matrike zmede}
 
-Za boljšo razlago razlik med natančnostjo in priklicem prikazujemo matrike zmede. V nadaljevanju interpretiramo predvsem \textit{FP} (ham $\rightarrow$ spam) in \textit{FN} (spam $\rightarrow$ ham), saj neposredno pojasnjujeta spremembe v natančnosti in priklicu.
+Za boljšo razlago razlik med natančnostjo in priklicem prikazujemo matrike zmede. V nadaljevanju interpretiramo predvsem \textit{FP} (Lažni pozitivi, ham $\rightarrow$ spam) in \textit{FN} (Lažni negativi, spam $\rightarrow$ ham), saj neposredno pojasnjujeta spremembe v natančnosti in priklicu.
 
 \begin{figure}[!htbp]
 \centering
@@ -564,7 +564,7 @@ Rezultati few-shot učenja kažejo zanimive vzorce. Pri mBERT modelu je dodatno 
 
 Pri TinyBERT modelu pa vidimo bolj dinamičen odziv na few-shot učenje, pri katerem povečanje $k$ ne vodi v enolično izboljšanje (Slika~\ref{fig:bert_tinybert_comparison}). V našem primeru je izhodiščni zero-shot rezultat za TinyBERT visok (F1 = 0,8906), pri $k=10$ pa se učinkovitost občutno poslabša (F1 = 0,8486), nato se pri $k=50$ in $k=100$ delno povrne (F1 = 0,8664 in 0,8888), pri $k=200$ pa ponovno pade (F1 = 0,8547) (Tabela~\ref{tab:tinybert_fewshot}).
 
-Grafi natančnosti in priklica (Sliki~\ref{fig:bert_tinybert_precision} in~\ref{fig:bert_tinybert_recall}) pokažejo, da je ta nihaj povezan s kompromisom med \emph{precision} in \emph{recall}. Pri $k=10$ TinyBERT doseže zelo visoko natančnost (0,9625), vendar hkrati močno pade priklic (0,7589), kar pomeni večje število lažno negativnih primerov spama; posledično pade tudi F1. Podobno pri $k=200$ natančnost ostane visoka (0,9442), priklic pa je nižji (0,7807), zato se F1 ne izboljša glede na izhodišče. Takšno obnašanje je skladno s scenarijem, kjer majhen in/ali domensko nehomogen nabor few-shot primerov povzroči nestabilno prilagajanje (prevelik vpliv posameznih primerov) in slabšo generalizacijo.
+Grafi natančnosti in priklica (Sliki~\ref{fig:bert_tinybert_precision} in~\ref{fig:bert_tinybert_recall}) pokažejo, da je ta nihaj povezan s kompromisom med \emph{natančnostjo} in \emph{priklicem}. Pri $k=10$ TinyBERT doseže zelo visoko natančnost (0,9625), vendar hkrati močno pade priklic (0,7589), kar pomeni večje število lažno negativnih primerov spama; posledično pade tudi F1. Podobno pri $k=200$ natančnost ostane visoka (0,9442), priklic pa je nižji (0,7807), zato se F1 ne izboljša glede na izhodišče. Takšno obnašanje je skladno s scenarijem, kjer majhen in/ali domensko nehomogen nabor few-shot primerov povzroči nestabilno prilagajanje (prevelik vpliv posameznih primerov) in slabšo generalizacijo.
 
 \subsection{Praktične implikacije}
 
